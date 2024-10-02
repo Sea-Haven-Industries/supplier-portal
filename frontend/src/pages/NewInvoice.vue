@@ -118,7 +118,7 @@
 									id="supplier_name"
 									:options="portalSuppliers.data"
 									:placeholder="'Supplier Name'"
-									:hideSearch="invoiceData.supplier_invoice_number"
+									:hideSearch="!invoiceData.supplier_invoice_number"
 									:label="'company_name'"
 									v-model="invoiceData.supplier_name"
 									v-else
@@ -413,18 +413,22 @@
 				<div class="mb-2 row">
 					<div class="col"></div>
 					<div class="col">
-						<div class="row">
+						<div class="input-group">
 							<label for="total_amount" class="col-sm-3 col-form-label"
 								>Total Amount</label
 							>
-							<div class="col-sm-5">
-								<input
-									type="text"
-									readonly
-									class="form-control-plaintext"
-									id="total_amount"
-									:value="invoiceData.total_amount"
-								/>
+							<div class="cols-sm-5">
+								<div class="input-group">
+									<span class="input-group-text currency-fmt"
+										><i class="bi bi-currency-dollar"></i>
+									</span>
+									<input
+										type="text"
+										readonly
+										class="form-control"
+										v-model.number="invoiceData.total_amount"
+									/>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -585,7 +589,14 @@ watch(
 </script>
 
 <style lang="css" scoped>
-input.form-control-plaintext:focus {
+input.form-control-plaintext:focus,
+.currency-fmt {
+	background-color: #fff;
+	border-color: #fff;
+	box-shadow: none;
+}
+
+.currency-fmt + input.form-control {
 	background-color: #fff;
 	border-color: #fff;
 	box-shadow: none;
