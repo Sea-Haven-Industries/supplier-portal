@@ -571,7 +571,7 @@ const saveInvoice = () => {
 	})
 }
 const portalSuppliers = createListResource({
-	doctype: 'Portal Supplier',
+	doctype: 'Supplier',
 	fields: ['name as value', 'company_name as label'],
 	orderBy: 'creation desc',
 })

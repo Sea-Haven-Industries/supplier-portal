@@ -1,7 +1,7 @@
 // Copyright (c) 2024, jeowsome15@gmail.com and contributors
 // For license information, please see license.txt
 
-// frappe.ui.form.on("Portal Supplier", {
+// frappe.ui.form.on("Supplier", {
 // 	refresh(frm) {
 
 // 	},

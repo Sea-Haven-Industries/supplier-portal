@@ -36,7 +36,7 @@
    "fieldname": "supplier",
    "fieldtype": "Link",
    "label": "Supplier ID",
-   "options": "Portal Supplier"
+   "options": "Supplier"
   },
   {
    "fieldname": "supplier_invoice_number",
@@ -168,7 +168,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-02 16:26:51.407319",
+ "modified": "2024-10-05 02:26:32.725807",
  "modified_by": "Administrator",
  "module": "Suppliers Portal",
  "name": "Supplier Portal Invoices",

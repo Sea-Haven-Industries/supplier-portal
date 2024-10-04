@@ -7,12 +7,12 @@ import frappe
 from frappe.model.document import Document
 
 
-class PortalSupplier(Document):
+class Supplier(Document):
     def generate_supplier_id(self, length: int = 8) -> str:
         # generate unique supplier integer id based on length
         supplier_id = random.randint(10 ** (length - 1), 10**length - 1)
 
-        while frappe.db.exists("Portal Supplier", {"supplier_id": supplier_id}):
+        while frappe.db.exists("Supplier", {"supplier_id": supplier_id}):
             supplier_id = random.randint(10 ** (length - 1), 10**length - 1)
 
         return str(supplier_id)
