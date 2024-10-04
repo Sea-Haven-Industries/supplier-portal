@@ -72,10 +72,13 @@
 <script setup>
 import { createListResource, Badge } from 'frappe-ui'
 import { session } from '../data/session'
+import { onBeforeMount } from 'vue'
 
-if (window.location.origin === 'https://accounting.seahavenind.com') {
-	window.location.replace('https://accounting.seahavenind.com/login#login')
-}
+onBeforeMount(() => {
+	if (window.location.origin === 'https://accounting.seahavenind.com') {
+		window.location.replace('https://accounting.seahavenind.com/login#login')
+	}
+})
 
 let invoiceParams = {
 	doctype: 'Supplier Portal Invoices',
