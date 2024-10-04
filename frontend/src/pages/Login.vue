@@ -45,11 +45,6 @@ const state = reactive({
 	forAdmin: false,
 })
 
-if (window.location.href.includes('accounting.seahavenind')) {
-	window.location.replace('https://accounting.seahavenind.com/erpnext')
-	console.log('redirected')
-}
-
 function submit(e) {
 	let formData = new FormData(e.target)
 	if (state.forAdmin) {
