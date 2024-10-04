@@ -73,7 +73,7 @@
 import { createListResource, Badge } from 'frappe-ui'
 import { session } from '../data/session'
 
-if (window.location.pathname.origin === 'https://accounting.seahavenind.com') {
+if (window.location.origin === 'https://accounting.seahavenind.com') {
 	window.location.replace('https://accounting.seahavenind.com/login#login')
 }
 
