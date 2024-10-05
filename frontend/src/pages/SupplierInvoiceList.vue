@@ -71,7 +71,7 @@ import { onBeforeMount } from 'vue'
 
 onBeforeMount(() => {
 	if (window.location.origin === 'https://accounting.seahavenind.com') {
-		window.location.replace('https://accounting.seahavenind.com/login#login')
+		window.location.replace('https://accounting.seahavenind.com/app')
 	}
 })
 
