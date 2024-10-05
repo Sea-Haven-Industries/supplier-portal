@@ -451,7 +451,7 @@ import Autocomplete from 'frappe-ui/src/components/Autocomplete.vue'
 const isAdministrator = sessionUser() === 'Administrator'
 
 const portalInvoice = createListResource({
-	doctype: 'Supplier Portal Invoices',
+	doctype: 'Invoices',
 	insert: {
 		onSuccess() {
 			router.push({ name: 'SupplierInvoiceList' })

@@ -1,7 +1,7 @@
 {
  "app": "Suppliers Portal",
  "charts": [],
- "content": "[{\"id\":\"Lix3qbsE_H\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Suppliers Portal</span>\",\"col\":12}},{\"id\":\"OdX-YH0tro\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supplier\",\"col\":4}},{\"id\":\"_vl927eRbo\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supplier Portal Invoices\",\"col\":4}}]",
+ "content": "[{\"id\":\"Lix3qbsE_H\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Suppliers Portal</span>\",\"col\":12}},{\"id\":\"OdX-YH0tro\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Supplier\",\"col\":4}},{\"id\":\"_vl927eRbo\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Invoices\",\"col\":4}}]",
  "creation": "2024-10-02 17:23:06.804441",
  "custom_blocks": [],
  "docstatus": 0,
@@ -37,8 +37,8 @@
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Supplier Portal Invoices",
-   "link_to": "Supplier Portal Invoices",
+   "label": "Invoices",
+   "link_to": "Invoices",
    "stats_filter": "[]",
    "type": "DocType"
   }

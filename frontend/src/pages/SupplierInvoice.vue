@@ -375,7 +375,7 @@ const props = defineProps({
 })
 
 const invoice = createDocumentResource({
-	doctype: 'Supplier Portal Invoices',
+	doctype: 'Invoices',
 	name: props.supplierInvoiceNumber,
 	auto: true,
 })

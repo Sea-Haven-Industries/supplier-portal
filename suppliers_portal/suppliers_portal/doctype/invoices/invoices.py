@@ -6,7 +6,7 @@ from frappe.model.document import Document
 from frappe.utils import add_days, flt, nowdate
 
 
-class SupplierPortalInvoices(Document):
+class Invoices(Document):
     def validate(self):
         self.set_total_amount()
         self.set_due_date()

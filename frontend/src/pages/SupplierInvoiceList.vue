@@ -76,7 +76,7 @@ onBeforeMount(() => {
 })
 
 let invoiceParams = {
-	doctype: 'Supplier Portal Invoices',
+	doctype: 'Invoices',
 	fields: ['*'],
 	orderBy: 'creation desc',
 	start: 0,
