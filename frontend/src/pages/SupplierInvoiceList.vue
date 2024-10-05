@@ -3,31 +3,26 @@
 		<div class="container mx-auto mt-5">
 			<div class="row">
 				<div class="col">
-					<h1 class="text-gray-900 font-bold text-[32px]">Supplier Invoices</h1>
+					<h1 class="text-gray-900 font-bold text-[32px]">Invoices</h1>
 					<div class="d-flex">
 						<div>
-							<div class="btn-group" role="group" aria-label="Basic example">
-								<button
-									type="button"
-									class="btn btn-sm btn-primary btn-dark"
-									@click="session.logout.submit"
-								>
-									Logout
-								</button>
-							</div>
+							<div class="btn-group" role="group" aria-label="Basic example"></div>
 						</div>
 					</div>
 				</div>
 				<div class="col">
 					<div class="d-flex">
-						<div class="ms-auto">
-							<div class="btn-group" role="group" aria-label="Basic example">
-								<router-link to="/invoices/new">
-									<button type="button" class="btn btn-primary btn-dark">
-										New
-									</button>
-								</router-link>
-							</div>
+						<div class="ms-auto d-flex" style="gap: 2px">
+							<router-link to="/invoices/new">
+								<button type="button" class="btn btn-primary btn-dark">New</button>
+							</router-link>
+							<button
+								type="button"
+								class="btn btn-primary btn-dark"
+								@click="session.logout.submit"
+							>
+								Logout
+							</button>
 						</div>
 					</div>
 				</div>

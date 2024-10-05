@@ -332,7 +332,7 @@
 			</div>
 
 			<div class="container">
-				<h4>Invoice item</h4>
+				<h4>Line Items</h4>
 				<table class="table" v-if="invoiceItems.length !== 0">
 					<thead>
 						<tr>

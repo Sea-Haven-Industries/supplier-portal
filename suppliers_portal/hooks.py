@@ -51,7 +51,7 @@ app_license = "mit"
 # Svg Icons
 # ------------------
 # include app icons in desk
-# app_include_icons = "suppliers_portal/public/icons.svg"
+# app_include_icons = "suppliers_portal/public/seahaven.svg"
 
 # Home Pages
 # ----------
