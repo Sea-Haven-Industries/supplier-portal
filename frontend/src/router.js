@@ -5,7 +5,7 @@ import { userResource } from '@/data/user'
 const routes = [
   {
     name: 'Login',
-    path: '/account/login',
+    path: '/login',
     component: () => import('@/pages/Login.vue'),
   },
   {

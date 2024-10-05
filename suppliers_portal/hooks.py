@@ -245,11 +245,5 @@ app_license = "mit"
 
 website_route_rules = [
     {"from_route": "/erpnext", "to_route": "/login"},
-    {"from_route": "/frontend/<path:app_path>", "to_route": "/frontend"},
-    {"from_route": "/supplier-portal/frontend", "to_route": "/frontend"},
-]
-
-
-website_redirects = [
-    {"source": "/supplier-portal/frontend", "target": "/frontend"},
+    {"from_route": "/supplier-portal/<path:app_path>", "to_route": "/frontend"},
 ]
