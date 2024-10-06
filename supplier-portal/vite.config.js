@@ -12,7 +12,7 @@ export default defineConfig({
         },
     },
     build: {
-        outDir: `../${path.basename(path.resolve('..'))}/public/frontend`,
+        outDir: `../${path.basename(path.resolve('..'))}/public/supplier-portal`,
         emptyOutDir: true,
         target: 'es2015',
     },

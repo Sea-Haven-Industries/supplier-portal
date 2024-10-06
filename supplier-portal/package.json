@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "vite build --base=/assets/suppliers_portal/frontend/ && yarn copy-html-entry",
+    "build": "vite build --base=/assets/suppliers_portal/supplier-portal/ && yarn copy-html-entry",
     "preview": "vite preview",
-    "copy-html-entry": "cp ../suppliers_portal/public/frontend/index.html ../suppliers_portal/www/frontend.html"
+    "copy-html-entry": "cp ../suppliers_portal/public/supplier-portal/index.html ../suppliers_portal/www/supplier-portal.html"
   },
   "dependencies": {
     "bootstrap": "5.2.3",

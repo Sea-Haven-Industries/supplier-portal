@@ -27,7 +27,7 @@ const routes = [
 ]
 
 let router = createRouter({
-  history: createWebHistory('/frontend'),
+  history: createWebHistory('/supplier-portal'),
   routes,
 })
 
@@ -38,6 +38,10 @@ router.beforeEach(async (to, from, next) => {
   } catch (error) {
     isLoggedIn = false
   }
+
+  console.log('isLoggedIn', isLoggedIn)
+  console.log('to', to)
+  console.log('from', from)
 
   if (to.name === 'Login' && isLoggedIn) {
     next({ name: 'SupplierInvoiceList' })
