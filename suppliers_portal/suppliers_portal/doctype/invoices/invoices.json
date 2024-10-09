@@ -17,13 +17,17 @@
   "status",
   "section_break_swkm",
   "supplier_invoice_items",
+  "section_break_slsq",
+  "payment_references",
   "section_break_ajbe",
+  "paid_amount",
   "total_amount",
   "column_break_quxe",
   "payment_reference_no",
   "payment_reference_date",
   "section_break_olmx",
   "service_address",
+  "site_code",
   "street",
   "city",
   "state",
@@ -35,7 +39,7 @@
   {
    "fieldname": "supplier",
    "fieldtype": "Link",
-   "label": "Supplier ID",
+   "label": "Supplier",
    "options": "Supplier"
   },
   {
@@ -75,7 +79,7 @@
    "fieldtype": "Select",
    "hidden": 1,
    "label": "Status",
-   "options": "Paid\nUnpaid\nOverdue"
+   "options": "Paid\nUnpaid\nOverdue\nPartially Paid"
   },
   {
    "fieldname": "service_date",
@@ -97,7 +101,9 @@
    "fetch_from": "supplier.company_name",
    "fieldname": "supplier_name",
    "fieldtype": "Data",
-   "label": "Supplier Name"
+   "hidden": 1,
+   "label": "Supplier Name",
+   "read_only": 1
   },
   {
    "fieldname": "service_address",
@@ -122,7 +128,7 @@
   },
   {
    "fieldname": "payment_reference_date",
-   "fieldtype": "Data",
+   "fieldtype": "Date",
    "label": "Payment Reference Date"
   },
   {
@@ -164,11 +170,32 @@
    "fieldname": "due_date",
    "fieldtype": "Date",
    "label": "Due Date"
+  },
+  {
+   "fieldname": "site_code",
+   "fieldtype": "Data",
+   "label": "Site Code"
+  },
+  {
+   "fieldname": "section_break_slsq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "payment_references",
+   "fieldtype": "Table",
+   "label": "Payment References",
+   "options": "Invoice Payment References"
+  },
+  {
+   "fieldname": "paid_amount",
+   "fieldtype": "Currency",
+   "label": "Paid Amount",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-05 02:26:32.725807",
+ "modified": "2024-10-09 18:12:49.160847",
  "modified_by": "Administrator",
  "module": "Suppliers Portal",
  "name": "Invoices",

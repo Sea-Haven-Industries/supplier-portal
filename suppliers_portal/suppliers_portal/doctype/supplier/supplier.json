@@ -12,7 +12,9 @@
   "street",
   "city",
   "state",
-  "zip_code"
+  "zip_code",
+  "section_break_svzz",
+  "invoices"
  ],
  "fields": [
   {
@@ -56,10 +58,21 @@
    "fieldname": "zip_code",
    "fieldtype": "Data",
    "label": "Zip Code"
+  },
+  {
+   "fieldname": "section_break_svzz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "invoices",
+   "fieldtype": "Table",
+   "label": "Invoices",
+   "options": "Supplier Invoices",
+   "read_only": 1
   }
  ],
  "links": [],
- "modified": "2024-09-28 02:13:04.095973",
+ "modified": "2024-10-09 18:09:28.675273",
  "modified_by": "Administrator",
  "module": "Suppliers Portal",
  "name": "Supplier",
@@ -78,7 +91,10 @@
    "write": 1
   }
  ],
+ "search_fields": "company_name",
+ "show_title_field_in_link": 1,
  "sort_field": "creation",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "company_name"
 }

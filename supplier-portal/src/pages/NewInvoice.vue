@@ -194,6 +194,19 @@
 								>
 									<div class="accordion-body">
 										<div class="row mb-1">
+											<label for="site_code" class="col-sm-3 col-form-label"
+												>Site Code</label
+											>
+											<div class="col-sm-8">
+												<input
+													type="text"
+													class="form-control"
+													id="site_code"
+													v-model="invoiceData.site_code"
+												/>
+											</div>
+										</div>
+										<div class="row mb-1">
 											<label for="street" class="col-sm-3 col-form-label"
 												>Street</label
 											>
@@ -505,6 +518,7 @@ const invoiceData = reactive({
 	supplier_name: sessionSupplierName(),
 	invoice_terms: '',
 	total_amount: 0,
+	site_code: '',
 	street: '',
 	city: '',
 	state: '',
@@ -554,6 +568,7 @@ const saveInvoice = () => {
 		invoice_date: invoiceData.invoice_date,
 		supplier_name: invoiceData.supplier_name,
 		invoice_terms: invoiceData.invoice_terms,
+		site_code: invoiceData.site_code,
 		street: invoiceData.street,
 		city: invoiceData.city,
 		state: invoiceData.state,

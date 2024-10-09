@@ -162,6 +162,20 @@
 								>
 									<div class="accordion-body">
 										<div class="row mb-1">
+											<label for="site_code" class="col-sm-3 col-form-label"
+												>Sitee Code</label
+											>
+											<div class="col-sm-8">
+												<input
+													type="text"
+													readonly
+													class="form-control-plaintext"
+													id="site_code"
+													:value="invoice.doc.site_code"
+												/>
+											</div>
+										</div>
+										<div class="row mb-1">
 											<label for="street" class="col-sm-3 col-form-label"
 												>Street</label
 											>
