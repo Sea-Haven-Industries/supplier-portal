@@ -8,8 +8,8 @@ from frappe.utils import add_days, flt, getdate, nowdate
 
 class Invoices(Document):
     def validate(self):
-        self.set_total_amount()
         self.set_due_date()
+        self.set_total_amount()
         self.set_total_paid()
         self.update_amount_due()
         self.update_status()
@@ -61,7 +61,12 @@ class Invoices(Document):
         self.db_set("status", self.status, update_modified=False, commit=True)
 
     def update_amount_due(self):
-        self.amount_due = self.total_amount - self.paid_amount
+        self.db_set(
+            "amount_due",
+            flt(self.total_amount) - flt(self.paid_amount),
+            update_modified=False,
+            commit=True,
+        )
 
     def update_suppliers_invoice(self):
         supplier = frappe.get_doc("Supplier", self.supplier)
