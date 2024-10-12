@@ -31,6 +31,6 @@ def update_invoice_status():
 
     for invoice in invoices:
         invoice_doc = frappe.get_doc("Invoices", invoice)
-        invoice_doc.update_status()
+        invoice_doc.validate()
 
     frappe.db.commit()
