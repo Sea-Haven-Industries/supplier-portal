@@ -11,6 +11,7 @@ class Invoices(Document):
         self.set_total_amount()
         self.set_due_date()
         self.set_total_paid()
+        self.update_amount_due()
         self.update_status()
 
     def on_update(self):
@@ -44,20 +45,23 @@ class Invoices(Document):
         self.db_set("paid_amount", total_paid)
 
     def update_status(self):
-        if (
-            self.payment_reference_no and self.payment_reference_date
-        ) or self.paid_amount == self.total_amount:
-            self.status = "Paid"
-        elif self.paid_amount != self.total_amount and nowdate() > self.due_date:
-            self.status = "Overdue"
-        else:
+        if self.paid_amount == 0:
             self.status = "Unpaid"
-
-        if self.paid_amount != self.total_amount and self.status not in (
-            "Paid",
-            "Overdue",
-        ):
+        elif self.paid_amount < self.total_amount and self.paid_amount > 0:
             self.status = "Partially Paid"
+        elif self.paid_amount == self.total_amount:
+            self.status = "Paid"
+
+        if getdate(nowdate()) > getdate(self.due_date):
+            if self.paid_amount == 0:
+                self.status = "Overdue"
+            elif self.paid_amount < self.total_amount:
+                self.status = "Partially Paid and Overdue"
+
+        self.db_set("status", self.status, update_modified=False, commit=True)
+
+    def update_amount_due(self):
+        self.amount_due = self.total_amount - self.paid_amount
 
     def update_suppliers_invoice(self):
         supplier = frappe.get_doc("Supplier", self.supplier)

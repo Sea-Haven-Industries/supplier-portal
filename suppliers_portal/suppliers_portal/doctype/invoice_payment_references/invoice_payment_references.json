@@ -15,12 +15,12 @@
   {
    "fieldname": "payment_reference_number",
    "fieldtype": "Data",
-   "label": "Payment Reference Number"
+   "label": "Reference Number"
   },
   {
    "fieldname": "payment_reference_date",
    "fieldtype": "Date",
-   "label": "Payment Reference Date"
+   "label": "Payment Date"
   },
   {
    "fieldname": "column_break_nukw",
@@ -29,13 +29,13 @@
   {
    "fieldname": "paid_amount",
    "fieldtype": "Currency",
-   "label": "Paid Amount"
+   "label": "Amount"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-10-09 16:29:15.297375",
+ "modified": "2024-10-12 07:16:26.416034",
  "modified_by": "Administrator",
  "module": "Suppliers Portal",
  "name": "Invoice Payment References",

@@ -21,10 +21,9 @@
   "payment_references",
   "section_break_ajbe",
   "paid_amount",
+  "amount_due",
   "total_amount",
   "column_break_quxe",
-  "payment_reference_no",
-  "payment_reference_date",
   "section_break_olmx",
   "service_address",
   "site_code",
@@ -79,7 +78,7 @@
    "fieldtype": "Select",
    "hidden": 1,
    "label": "Status",
-   "options": "Paid\nUnpaid\nOverdue\nPartially Paid"
+   "options": "Paid\nUnpaid\nOverdue\nPartially Paid\nPartially Paid and Overdue"
   },
   {
    "fieldname": "service_date",
@@ -120,16 +119,6 @@
    "fieldtype": "Currency",
    "label": "Total Amount",
    "read_only": 1
-  },
-  {
-   "fieldname": "payment_reference_no",
-   "fieldtype": "Data",
-   "label": "Payment Reference No."
-  },
-  {
-   "fieldname": "payment_reference_date",
-   "fieldtype": "Date",
-   "label": "Payment Reference Date"
   },
   {
    "fieldname": "column_break_quxe",
@@ -191,11 +180,17 @@
    "fieldtype": "Currency",
    "label": "Paid Amount",
    "read_only": 1
+  },
+  {
+   "fieldname": "amount_due",
+   "fieldtype": "Currency",
+   "label": "Amount Due",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-10-09 18:12:49.160847",
+ "modified": "2024-10-12 08:12:37.273898",
  "modified_by": "Administrator",
  "module": "Suppliers Portal",
  "name": "Invoices",
