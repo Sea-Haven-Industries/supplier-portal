@@ -148,23 +148,21 @@ app_license = "mit"
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"suppliers_portal.tasks.all"
-# 	],
-# 	"daily": [
-# 		"suppliers_portal.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"suppliers_portal.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"suppliers_portal.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"suppliers_portal.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+    # 	"all": [
+    # 		"suppliers_portal.tasks.all"
+    # 	],
+    "daily": ["suppliers_portal.utils.daily_invoice_status_update"],
+    # 	"hourly": [
+    # 		"suppliers_portal.tasks.hourly"
+    # 	],
+    # 	"weekly": [
+    # 		"suppliers_portal.tasks.weekly"
+    # 	],
+    # 	"monthly": [
+    # 		"suppliers_portal.tasks.monthly"
+    # 	],
+}
 
 # Testing
 # -------
