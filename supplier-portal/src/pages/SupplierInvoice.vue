@@ -163,7 +163,7 @@
 									<div class="accordion-body">
 										<div class="row mb-1">
 											<label for="site_code" class="col-sm-3 col-form-label"
-												>Sitee Code</label
+												>Site Code</label
 											>
 											<div class="col-sm-8">
 												<input
@@ -248,7 +248,7 @@
 										aria-expanded="true"
 										aria-controls="collapse-2"
 									>
-										Payment Reference and Notes
+										Notes
 									</button>
 								</h2>
 								<div
@@ -257,46 +257,6 @@
 									data-bs-parent="#address-accordion"
 								>
 									<div class="accordion-body">
-										<div
-											class="row mb-1"
-											v-if="invoice.doc.payment_reference_no"
-										>
-											<label
-												for="payment_reference_no"
-												class="col-sm-4 col-form-label"
-												>Payment Reference</label
-											>
-											<div class="col-sm-8">
-												<input
-													type="text"
-													readonly
-													class="form-control-plaintext"
-													id="payment_reference_no"
-													:value="invoice.doc.payment_reference_no"
-												/>
-											</div>
-										</div>
-										<div
-											class="row mb-1"
-											v-if="invoice.doc.payment_reference_date"
-										>
-											<label
-												for="payment_reference_date"
-												class="col-sm-4 col-form-label"
-												>Payment Date</label
-											>
-											<div class="col-sm-8">
-												<TextInput
-													:type="'date'"
-													size="lg"
-													variant="outline"
-													placeholder="Payment Date"
-													id="payment_reference_date"
-													:disabled="true"
-													v-model="invoice.doc.payment_reference_date"
-												/>
-											</div>
-										</div>
 										<div class="row mb-1">
 											<label for="notes" class="col-sm-4 col-form-label"
 												>Notes</label

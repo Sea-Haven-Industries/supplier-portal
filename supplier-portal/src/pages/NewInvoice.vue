@@ -275,11 +275,7 @@
 										aria-expanded="true"
 										aria-controls="collapse-2"
 									>
-										{{
-											sessionSupplierId()
-												? 'Notes'
-												: 'Payment Reference and Notes'
-										}}
+										Notes
 									</button>
 								</h2>
 								<div
@@ -288,39 +284,6 @@
 									data-bs-parent="#address-accordion"
 								>
 									<div class="accordion-body">
-										<div class="row mb-1" v-if="!sessionSupplierId()">
-											<label
-												for="payment_reference_no"
-												class="col-sm-3 col-form-label"
-												>Payment Reference</label
-											>
-											<div class="col-sm-5">
-												<input
-													type="text"
-													class="form-control"
-													id="payment_reference_no"
-													v-model="invoiceData.payment_reference_no"
-												/>
-											</div>
-										</div>
-										<div class="row mb-1" v-if="!sessionSupplierId()">
-											<label
-												for="payment_reference_date"
-												class="col-sm-3 col-form-label"
-												>Payment Date</label
-											>
-											<div class="col-sm-5">
-												<TextInput
-													:type="'date'"
-													size="lg"
-													variant="outline"
-													placeholder="Payment Date"
-													id="payment_reference_date"
-													:disabled="false"
-													v-model="invoiceData.payment_reference_date"
-												/>
-											</div>
-										</div>
 										<div class="row mb-1">
 											<label for="notes" class="col-sm-3 col-form-label"
 												>Notes</label
@@ -523,8 +486,6 @@ const invoiceData = reactive({
 	city: '',
 	state: '',
 	zip_code: '',
-	payment_reference_no: '',
-	payment_reference_date: new Date().toISOString().split('T')[0],
 	notes: '',
 })
 
@@ -573,8 +534,6 @@ const saveInvoice = () => {
 		city: invoiceData.city,
 		state: invoiceData.state,
 		zip_code: invoiceData.zip_code,
-		payment_reference_date: invoiceData.payment_reference_date,
-		payment_reference_no: invoiceData.payment_reference_no,
 		notes: invoiceData.notes,
 		supplier_invoice_items: invoiceItems.map((item) => {
 			return {
