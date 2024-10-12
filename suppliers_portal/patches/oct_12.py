@@ -3,6 +3,7 @@ import frappe
 
 def execute():
     update_supplier_invoices()
+    update_invoice_status()
 
 
 def update_supplier_invoices():
