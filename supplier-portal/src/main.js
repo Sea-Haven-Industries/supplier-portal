@@ -7,16 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
-
-
-import {
-    Button,
-    Card,
-    Input,
-    setConfig,
-    frappeRequest,
-    resourcesPlugin,
-} from 'frappe-ui'
+import { Button, Card, Input, setConfig, frappeRequest, resourcesPlugin } from 'frappe-ui'
 
 let app = createApp(App)
 

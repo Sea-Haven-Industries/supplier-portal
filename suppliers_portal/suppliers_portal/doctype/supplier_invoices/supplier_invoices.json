@@ -1,69 +1,62 @@
 {
- "actions": [],
- "allow_rename": 1,
- "creation": "2024-10-09 16:59:58.079331",
- "doctype": "DocType",
- "editable_grid": 1,
- "engine": "InnoDB",
- "field_order": [
-  "invoice_number",
-  "status",
-  "column_break_mprs",
-  "invoice_date",
-  "terms",
-  "total_due"
- ],
- "fields": [
-  {
-   "fieldname": "invoice_number",
-   "fieldtype": "Link",
-   "label": "Invoice Number",
-   "options": "Invoices",
-   "read_only": 1
-  },
-  {
-   "fetch_from": "invoice_number.invoice_date",
-   "fieldname": "invoice_date",
-   "fieldtype": "Date",
-   "label": "Invoice Date",
-   "read_only": 1
-  },
-  {
-   "fetch_from": "invoice_number.invoice_terms",
-   "fieldname": "terms",
-   "fieldtype": "Data",
-   "label": "Term",
-   "read_only": 1
-  },
-  {
-   "fetch_from": "invoice_number.total_amount",
-   "fieldname": "total_due",
-   "fieldtype": "Currency",
-   "label": "Total Due",
-   "read_only": 1
-  },
-  {
-   "fetch_from": "invoice_number.status",
-   "fieldname": "status",
-   "fieldtype": "Data",
-   "label": "Status",
-   "read_only": 1
-  },
-  {
-   "fieldname": "column_break_mprs",
-   "fieldtype": "Column Break"
-  }
- ],
- "index_web_pages_for_search": 1,
- "istable": 1,
- "links": [],
- "modified": "2024-10-09 17:33:59.785852",
- "modified_by": "Administrator",
- "module": "Suppliers Portal",
- "name": "Supplier Invoices",
- "owner": "Administrator",
- "permissions": [],
- "sort_field": "creation",
- "sort_order": "DESC",
- "states": []
+	"actions": [],
+	"allow_rename": 1,
+	"creation": "2024-10-09 16:59:58.079331",
+	"doctype": "DocType",
+	"editable_grid": 1,
+	"engine": "InnoDB",
+	"field_order": ["invoice_number", "status", "column_break_mprs", "invoice_date", "terms", "total_due"],
+	"fields": [
+		{
+			"fieldname": "invoice_number",
+			"fieldtype": "Link",
+			"label": "Invoice Number",
+			"options": "Invoices",
+			"read_only": 1
+		},
+		{
+			"fetch_from": "invoice_number.invoice_date",
+			"fieldname": "invoice_date",
+			"fieldtype": "Date",
+			"label": "Invoice Date",
+			"read_only": 1
+		},
+		{
+			"fetch_from": "invoice_number.invoice_terms",
+			"fieldname": "terms",
+			"fieldtype": "Data",
+			"label": "Term",
+			"read_only": 1
+		},
+		{
+			"fetch_from": "invoice_number.total_amount",
+			"fieldname": "total_due",
+			"fieldtype": "Currency",
+			"label": "Total Due",
+			"read_only": 1
+		},
+		{
+			"fetch_from": "invoice_number.status",
+			"fieldname": "status",
+			"fieldtype": "Data",
+			"label": "Status",
+			"read_only": 1
+		},
+		{
+			"fieldname": "column_break_mprs",
+			"fieldtype": "Column Break"
+		}
+	],
+	"index_web_pages_for_search": 1,
+	"istable": 1,
+	"links": [],
+	"modified": "2024-10-09 17:33:59.785852",
+	"modified_by": "Administrator",
+	"module": "Suppliers Portal",
+	"name": "Supplier Invoices",
+	"owner": "Administrator",
+	"permissions": [],
+	"sort_field": "creation",
+	"sort_order": "DESC",
+	"states": []
 }

@@ -16,13 +16,7 @@
 							<router-link to="/invoices/new">
 								<button type="button" class="btn btn-primary btn-dark">New</button>
 							</router-link>
-							<button
-								type="button"
-								class="btn btn-primary btn-dark"
-								@click="session.logout.submit"
-							>
-								Logout
-							</button>
+							<button type="button" class="btn btn-primary btn-dark" @click="session.logout.submit">Logout</button>
 						</div>
 					</div>
 				</div>
