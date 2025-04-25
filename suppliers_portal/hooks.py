@@ -137,31 +137,30 @@ app_license = "mit"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+	"Supplier": {
+		"autoname": "suppliers_portal.overrides.supplier.generate_supplier_id",
+		"after_insert": "suppliers_portal.overrides.supplier.create_user",
+	}
+}
 
 # Scheduled Tasks
 # ---------------
 
 scheduler_events = {
-    # 	"all": [
-    # 		"suppliers_portal.tasks.all"
-    # 	],
-    "daily": ["suppliers_portal.utils.daily_invoice_status_update"],
-    # 	"hourly": [
-    # 		"suppliers_portal.tasks.hourly"
-    # 	],
-    # 	"weekly": [
-    # 		"suppliers_portal.tasks.weekly"
-    # 	],
-    # 	"monthly": [
-    # 		"suppliers_portal.tasks.monthly"
-    # 	],
+	# 	"all": [
+	# 		"suppliers_portal.tasks.all"
+	# 	],
+	"daily": ["suppliers_portal.utils.daily_invoice_status_update"],
+	# 	"hourly": [
+	# 		"suppliers_portal.tasks.hourly"
+	# 	],
+	# 	"weekly": [
+	# 		"suppliers_portal.tasks.weekly"
+	# 	],
+	# 	"monthly": [
+	# 		"suppliers_portal.tasks.monthly"
+	# 	],
 }
 
 # Testing
@@ -242,6 +241,6 @@ scheduler_events = {
 
 
 website_route_rules = [
-    {"from_route": "/supplier-portal/<path:app_path>", "to_route": "supplier-portal"},
-    {"from_route": "/erpnext", "to_route": "/app"},
+	{"from_route": "/supplier-portal/<path:app_path>", "to_route": "supplier-portal"},
+	{"from_route": "/erpnext", "to_route": "/app"},
 ]
