@@ -1,24 +1,95 @@
-from pathlib import Path
+import json
 
 import frappe
 from erpnext.accounts.utils import get_account_name
+from erpnext.setup.utils import enable_all_roles_and_domains
 from frappe.contacts.doctype.address.address import get_address_display
-from frappe.core.doctype.data_import.importer import Importer, Row
-from frappe.utils import flt, getdate, update_progress_bar
+from frappe.desk.page.setup_wizard.setup_wizard import setup_complete
+from frappe.utils import getdate, update_progress_bar
 
 ######################## PATCH PREREQUISITES ########################
 # - This patch should be run on a fresh site with ERPNext installed
-# - There should be fiscal years made for 2020, 2024 and 2025
+# - The following files (containing exported doctype records) must be setup in the
+#   site's private backups folder:
+#   - users.json (the 'send_welcome_email' field should be set to 0 otherwise it'll
+#     try to send welcome emails)
+#   - suppliers.json (remove duplicate entry for 'Superior Backflow Services, LLC')
+#   - invoices.json
 
 
 def execute():
+	setup_site()
+	create_fiscal_years()
+	create_roles()
+	import_users()
 	create_items()
 	create_payment_terms_template()
-
-	frappe.flags.in_import = True
 	import_suppliers()
 	import_invoices()
-	frappe.flags.in_import = False
+
+
+def setup_site():
+	print("Setting up site")
+	frappe.clear_cache()
+	today = getdate()
+	setup_complete(
+		{
+			"currency": "USD",
+			"full_name": "Administrator",
+			"company_name": "Sea Haven Industries",
+			"timezone": "America/New_York",
+			"company_abbr": "SHI",
+			"domains": ["Services"],
+			"country": "United States",
+			"fy_start_date": today.replace(month=1, day=1).isoformat(),
+			"fy_end_date": today.replace(month=12, day=31).isoformat(),
+			"language": "en-US",
+			"company_tagline": "Sea Haven Industries",
+			"email": "support@seahavenindustries.com",
+			"password": "admin",
+			"chart_of_accounts": "Standard with Numbers",
+			"bank_account": "Primary Checking",
+		}
+	)
+	enable_all_roles_and_domains()
+	for module in frappe.get_all("Module Onboarding"):
+		frappe.db.set_value("Module Onboarding", module, "is_complete", True)
+	frappe.db.set_value("User", "Administrator", "time_zone", "America/New_York")
+	frappe.db.commit()
+
+
+def create_fiscal_years():
+	for year in range(2020, 2027):
+		if not frappe.db.exists("Fiscal Year", str(year)):
+			fiscal_year = frappe.new_doc("Fiscal Year")
+			fiscal_year.update(
+				{
+					"year": str(year),
+					"year_start_date": getdate(f"{year}-01-01"),
+					"year_end_date": getdate(f"{year}-12-31"),
+				}
+			)
+			fiscal_year.insert(ignore_permissions=True)
+
+
+def create_roles():
+	roles = ["Portal Supplier", "Supplier"]
+	for role in roles:
+		if not frappe.db.exists("Role", role):
+			role_doc = frappe.new_doc("Role")
+			role_doc.update(
+				{
+					"role_name": role,
+					"desk_access": False,
+				}
+			)
+			role_doc.insert(ignore_permissions=True)
+
+
+def import_users():
+	print("Importing users")
+	users_file = frappe.get_site_path("private", "backups", "users.json")
+	frappe.import_doc(users_file)
 
 
 def create_items():
@@ -54,7 +125,6 @@ def create_payment_terms_template():
 
 			template = frappe.new_doc("Payment Terms Template")
 			template.template_name = template_name
-			template.allocate_payment_based_on_payment_terms = True
 			template.append(
 				"terms",
 				{
@@ -67,230 +137,175 @@ def create_payment_terms_template():
 			template.save(ignore_permissions=True)
 
 
-def import_suppliers():
-	suppliers_file = Path(__file__).parent / "data" / "supplier.csv"
-	supplier_importer = Importer("Supplier", file_path=str(suppliers_file), console=True)
-	suppliers = supplier_importer.import_file.data
-
-	supplier: Row
-	for idx, supplier in enumerate(suppliers):
-		update_progress_bar("Importing Suppliers", idx, (len(suppliers)))
-		(
-			# supplier details
-			_,
-			supplier_id,
-			created_on,
-			created_by,
-			company_name,
-			street,
-			city,
-			state,
-			pincode,
-			# supplier invoices; not importing using this sheet
-			*extra,
-		) = supplier.as_list()
-
-		# ignore child rows
-		if not company_name:
-			continue
-
-		# skip if supplier already exists
-		supplier_id = supplier_id.replace('"', "")
-		if frappe.db.exists("Supplier", {"name": supplier_id}):
-			continue
-
-		supplier_doc = frappe.new_doc("Supplier")
-		supplier_doc.update(
-			{
-				"name": supplier_id,
-				"supplier_name": company_name,
-				"owner": created_by,
-				"creation": created_on,
-			}
-		)
-		supplier_doc.insert(ignore_permissions=True)
-
-		if street:
-			address = frappe.new_doc("Address")
-			address.update(
+def create_address(doc):
+	address = frappe.new_doc("Address")
+	address.update(
+		{
+			"address_type": "Billing",
+			"address_title": doc.get("title"),
+			"address_line1": doc.get("street"),
+			"city": doc.get("city") or "Unknown",
+			"state": doc.get("state"),
+			"pincode": doc.get("zip_code"),
+			"country": "United States",
+			"is_primary_address": True,
+			"is_shipping_address": True,
+			"links": [
 				{
-					"address_type": "Billing",
-					"address_title": company_name,
-					"address_line1": street,
-					"city": city or "Unknown",
-					"state": state,
-					"pincode": pincode,
-					"country": "United States",
-					"is_primary_address": True,
-					"is_shipping_address": True,
-					"links": [
-						{"link_doctype": "Supplier", "link_name": supplier_doc.name},
-					],
+					"link_doctype": doc.get("ref_doctype"),
+					"link_name": doc.get("ref_name"),
+				},
+			],
+		}
+	)
+
+	try:
+		address.insert(ignore_permissions=True)
+	except Exception as e:
+		print(f"Error inserting address for {doc.get('ref_name')}: {e}")
+		return frappe._dict()
+
+	return address
+
+
+def import_suppliers():
+	suppliers_file = frappe.get_site_path("private", "backups", "suppliers.json")
+	with open(suppliers_file) as f:
+		suppliers = json.load(f)
+		for idx, supplier in enumerate(suppliers):
+			update_progress_bar("Importing suppliers", idx, (len(suppliers)))
+
+			# skip if supplier already exists
+			if frappe.db.exists("Supplier", {"name": supplier.get("name")}):
+				continue
+
+			supplier_doc = frappe.new_doc("Supplier")
+			supplier_doc.update(
+				{
+					"supplier_name": supplier.get("company_name"),
+					"portal_users": [{"user": supplier.get("user")}],
+					"owner": supplier.get("owner"),
+					"creation": supplier.get("creation"),
 				}
 			)
-			address.insert(ignore_permissions=True)
-			address_display = get_address_display(address.name)
-			supplier_doc.db_set("supplier_primary_address", address.name)
-			supplier_doc.db_set("primary_address", address_display)
+			supplier_doc.insert(ignore_permissions=True)
+			supplier_docname = frappe.rename_doc(
+				"Supplier", supplier_doc.name, supplier.get("name"), force=True
+			)
+
+			if supplier.get("street"):
+				address = create_address(
+					{
+						**supplier,
+						"title": supplier.get("company_name"),
+						"ref_doctype": "Supplier",
+						"ref_name": supplier_docname,
+					}
+				)
+
+				if address:
+					address_display = get_address_display(address.name)
+					supplier_doc.db_set("supplier_primary_address", address.name)
+					supplier_doc.db_set("primary_address", address_display)
 
 
 def import_invoices():
-	invoices_file = Path(__file__).parent / "data" / "invoices.csv"
-	invoice_importer = Importer("Purchase Invoice", file_path=str(invoices_file), console=True)
-	invoices = invoice_importer.import_file.data
+	invoices_file = frappe.get_site_path("private", "backups", "invoices.json")
+	with open(invoices_file) as f:
+		invoices = json.load(f)
+		for idx, invoice in enumerate(invoices):
+			update_progress_bar("Importing invoices", idx, (len(invoices)))
 
-	invoice: Row
-	invoices_map = {}
-	current_invoice_number = None
-	for invoice in invoices:
-		(
-			# invoice details
-			_,
-			_,
-			supplier_invoice_number,
-			_,
-			invoice_date,
-			invoice_terms,
-			created_on,
-			created_by,
-			supplier,
-			due_date,
-			_,
-			_,
-			_,
-			site_code,
-			_,
-			_,
-			_,
-			_,
-			notes,
-			# invoice items
-			_,
-			item_id,
-			_,
-			_,
-			service_type,
-			quantity,
-			rate,
-			_,
-			# invoice payments
-			_,
-			payment_id,
-			_,
-			_,
-			reference_number,
-			payment_date,
-			payment_amount,
-		) = invoice.as_list()
-
-		if supplier_invoice_number:
-			current_invoice_number = supplier_invoice_number
-
-			# parent row
-			if frappe.db.exists("Purchase Invoice", {"name": supplier_invoice_number}):
+			# skip if purchase invoice already exists
+			if frappe.db.exists("Purchase Invoice", {"name": invoice.get("name")}):
 				continue
 
 			remarks = ""
-			if site_code:
-				remarks += f"Site Code: {site_code}\n"
-			if notes:
-				remarks += f"Notes: {notes}\n"
+			if invoice.get("site_code"):
+				remarks += f"Site Code: {invoice.get('site_code')}\n"
+			if invoice.get("notes"):
+				remarks += f"Notes: {invoice.get('notes')}\n"
 
-			invoices_map[supplier_invoice_number] = {
-				"invoice_date": getdate(invoice_date),
-				"terms": invoice_terms,
-				"supplier": supplier,
-				"due_date": getdate(due_date),
-				"remarks": remarks,
-				"creation": created_on,
-				"owner": created_by,
-				"items": [],
-				"payments": [],
-			}
-
-		invoice_map = invoices_map.get(current_invoice_number)
-		if invoice_map:
-			if item_id:
-				invoice_map["items"].append(
-					{
-						"item_code": service_type,
-						"qty": flt(quantity),
-						"rate": flt(rate),
-					}
-				)
-			if payment_id and flt(payment_amount) > 0:
-				invoice_map["payments"].append(
-					{
-						"reference_number": reference_number,
-						"payment_date": payment_date,
-						"payment_amount": flt(payment_amount),
-					}
-				)
-
-	for idx, invoice_id in enumerate(invoices_map):
-		update_progress_bar("Importing Invoices", idx, (len(invoices_map)))
-		invoice_map = invoices_map[invoice_id]
-		invoice_doc = frappe.new_doc("Purchase Invoice")
-		invoice_doc.update(
-			{
-				"name": invoice_id,
-				"supplier": invoice_map.get("supplier"),
-				"bill_no": invoice_id,
-				"bill_date": getdate(invoice_map.get("invoice_date")),
-				"set_posting_time": True,
-				"posting_date": getdate(invoice_map.get("invoice_date")),
-				"due_date": getdate(invoice_map.get("due_date")),
-				"payment_terms_template": invoice_map.get("invoice_terms"),
-				"remarks": invoice_map.get("remarks"),
-				"owner": invoice_map.get("owner"),
-				"creation": invoice_map.get("creation"),
-			}
-		)
-
-		for item in invoice_map.get("items"):
-			invoice_doc.append(
-				"items",
+			invoice_doc = frappe.new_doc("Purchase Invoice")
+			invoice_doc.update(
 				{
-					"item_code": item.get("item_code"),
-					"received_qty": item.get("qty"),
-					"qty": item.get("qty"),
-					"rate": item.get("rate"),
-				},
-			)
-
-		try:
-			invoice_doc.insert(ignore_permissions=True)
-			invoice_doc.submit()
-		except Exception as e:
-			print(f"Error importing invoice {invoice_id}: {e}")
-			continue
-
-		for payment in invoice_map.get("payments"):
-			payment_doc = frappe.new_doc("Payment Entry")
-			payment_doc.update(
-				{
-					"payment_type": "Pay",
-					"posting_date": getdate(payment.get("payment_date")),
-					"party_type": "Supplier",
-					"party": invoice_map.get("supplier"),
-					"paid_amount": payment.get("payment_amount"),
-					"received_amount": payment.get("payment_amount"),
-					"paid_from": get_account_name("Bank", "Asset"),
-					"reference_no": payment.get("reference_number")
-					or "Note: Missing reference during ERPNext import",
-					"reference_date": getdate(payment.get("payment_date")),
-					"references": [
-						{
-							"reference_doctype": "Purchase Invoice",
-							"reference_name": invoice_id,
-							"allocated_amount": payment.get("payment_amount"),
-						}
-					],
+					"supplier": invoice.get("supplier"),
+					"bill_no": invoice.get("supplier_invoice_number"),
+					"bill_date": getdate(invoice.get("invoice_date")),
+					"set_posting_time": True,
+					"posting_date": getdate(invoice.get("invoice_date")),
+					"due_date": getdate(invoice.get("due_date")),
+					"payment_terms_template": invoice.get("invoice_terms"),
+					"remarks": invoice.get("remarks"),
+					"owner": invoice.get("owner"),
+					"creation": invoice.get("creation"),
 				}
 			)
 
+			for item in invoice.get("supplier_invoice_items"):
+				invoice_doc.append(
+					"items",
+					{
+						"item_code": item.get("service_type"),
+						"received_qty": item.get("quantity"),
+						"qty": item.get("quantity"),
+						"rate": item.get("rate"),
+					},
+				)
+
+			# to avoid validating the custom due dates based on payment terms
+			invoice_doc.ignore_default_payment_terms_template = True
+
 			try:
-				payment_doc.insert(ignore_permissions=True)
-				payment_doc.submit()
+				invoice_doc.insert(ignore_permissions=True)
 			except Exception as e:
-				print(f"Error importing payment for invoice {invoice_id}: {e}")
+				print(f"Error inserting invoice {invoice_doc.bill_no}: {e}")
+				continue
+
+			if invoice.get("street"):
+				address = create_address(
+					{
+						**invoice,
+						"title": invoice.get("supplier"),
+						"ref_doctype": "Supplier",
+						"ref_name": invoice.get("supplier"),
+					}
+				)
+				invoice_doc.supplier_address = address.name
+				invoice_doc.save()
+
+			try:
+				invoice_doc.submit()
+			except Exception as e:
+				print(f"Error submitting invoice {invoice_doc.bill_no}: {e}")
+				continue
+
+			for payment in invoice.get("payment_references"):
+				payment_doc = frappe.new_doc("Payment Entry")
+				payment_doc.update(
+					{
+						"payment_type": "Pay",
+						"posting_date": getdate(payment.get("payment_reference_date")),
+						"party_type": "Supplier",
+						"party": invoice.get("supplier"),
+						"paid_amount": payment.get("paid_amount"),
+						"received_amount": payment.get("paid_amount"),
+						"paid_from": get_account_name("Bank", "Asset"),
+						"reference_no": payment.get("payment_reference_number")
+						or "Note: Missing reference during ERPNext import",
+						"reference_date": getdate(payment.get("payment_reference_date")),
+						"references": [
+							{
+								"reference_doctype": invoice_doc.doctype,
+								"reference_name": invoice_doc.name,
+								"allocated_amount": payment.get("paid_amount"),
+							}
+						],
+					}
+				)
+
+				try:
+					payment_doc.insert(ignore_permissions=True)
+					payment_doc.submit()
+				except Exception as e:
+					print(f"Error importing payment for invoice {invoice_doc.bill_no}: {e}")

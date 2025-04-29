@@ -4,6 +4,10 @@ import frappe
 
 
 def generate_supplier_id(supplier, method=None):
+	# skip ID creation during patch migrations
+	if frappe.flags.in_patch:
+		return
+
 	length = 8
 	supplier_id = random.randint(10 ** (length - 1), 10**length - 1)
 	while frappe.db.exists("Supplier", {"supplier_id": supplier_id}):
