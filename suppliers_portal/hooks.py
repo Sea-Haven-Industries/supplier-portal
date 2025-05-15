@@ -151,7 +151,9 @@ scheduler_events = {
 	# 	"all": [
 	# 		"suppliers_portal.tasks.all"
 	# 	],
-	"daily": ["suppliers_portal.utils.daily_invoice_status_update"],
+	# 	"daily": [
+	# 		"suppliers_portal.tasks.daily"
+	# 	],
 	# 	"hourly": [
 	# 		"suppliers_portal.tasks.hourly"
 	# 	],

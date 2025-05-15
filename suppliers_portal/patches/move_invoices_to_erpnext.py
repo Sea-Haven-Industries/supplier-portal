@@ -236,7 +236,7 @@ def import_invoices():
 					"posting_date": getdate(invoice.get("invoice_date")),
 					"due_date": getdate(invoice.get("due_date")),
 					"payment_terms_template": invoice.get("invoice_terms"),
-					"remarks": invoice.get("remarks"),
+					"remarks": remarks,
 					"owner": invoice.get("owner"),
 					"creation": invoice.get("creation"),
 				}

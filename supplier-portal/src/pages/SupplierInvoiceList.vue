@@ -46,7 +46,7 @@
 							<td>
 								<Badge>{{ item.status }}</Badge>
 							</td>
-							<td><i class="bi bi-currency-dollar"></i> {{ item.total_amount }}</td>
+							<td><i class="bi bi-currency-dollar"></i> {{ item.grand_total }}</td>
 						</tr>
 					</tbody>
 				</table>
@@ -70,7 +70,7 @@ onBeforeMount(() => {
 })
 
 let invoiceParams = {
-	doctype: 'Invoices',
+	doctype: 'Purchase Invoice',
 	fields: ['*'],
 	orderBy: 'creation desc',
 	start: 0,
