@@ -1,6 +1,7 @@
 import json
 
 import frappe
+from erpnext.accounts.doctype.account.account import update_account_number
 from erpnext.accounts.utils import get_account_name
 from erpnext.setup.utils import enable_all_roles_and_domains
 from frappe.contacts.doctype.address.address import get_address_display
@@ -19,6 +20,7 @@ from frappe.utils import getdate, update_progress_bar
 
 def execute():
 	setup_site()
+	setup_accounts()
 	create_fiscal_years()
 	create_roles()
 	import_users()
@@ -56,6 +58,39 @@ def setup_site():
 		frappe.db.set_value("Module Onboarding", module, "is_complete", True)
 	frappe.db.set_value("User", "Administrator", "time_zone", "America/New_York")
 	frappe.db.commit()
+
+
+def setup_accounts():
+	abbr = frappe.db.get_value("Company", "Sea Haven Industries", "abbr")
+
+	frappe.rename_doc(
+		"Account",
+		f"1000 - Application of Funds (Assets) - {abbr}",
+		f"1000 - Assets - {abbr}",
+		force=True,
+	)
+	frappe.rename_doc(
+		"Account",
+		f"2000 - Source of Funds (Liabilities) - {abbr}",
+		f"2000 - Liabilities - {abbr}",
+		force=True,
+	)
+	frappe.rename_doc(
+		"Account",
+		f"1310 - Debtors - {abbr}",
+		f"1310 - Accounts Receivable - {abbr}",
+		force=True,
+	)
+	frappe.rename_doc(
+		"Account",
+		f"2110 - Creditors - {abbr}",
+		f"2110 - Accounts Payable - {abbr}",
+		force=True,
+	)
+	update_account_number(f"1110 - Cash - {abbr}", "Petty Cash", account_number="1110")
+	update_account_number(
+		f"Primary Checking - {abbr}", "Primary Checking", account_number="1201"
+	)
 
 
 def create_fiscal_years():
@@ -289,7 +324,9 @@ def import_invoices():
 						"paid_from": get_account_name("Bank", "Asset"),
 						"reference_no": payment.get("payment_reference_number")
 						or "Note: Missing reference during ERPNext import",
-						"reference_date": getdate(payment.get("payment_reference_date")),
+						"reference_date": getdate(
+							payment.get("payment_reference_date")
+						),
 						"references": [
 							{
 								"reference_doctype": invoice_doc.doctype,
@@ -304,4 +341,6 @@ def import_invoices():
 					payment_doc.insert(ignore_permissions=True)
 					payment_doc.submit()
 				except Exception as e:
-					print(f"Error importing payment for invoice {invoice_doc.bill_no}: {e}")
+					print(
+						f"Error importing payment for invoice {invoice_doc.bill_no}: {e}"
+					)
