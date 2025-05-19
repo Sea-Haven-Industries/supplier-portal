@@ -8,7 +8,7 @@ from frappe.desk.page.setup_wizard.setup_wizard import setup_complete
 from frappe.utils import getdate, update_progress_bar
 
 ######################## PATCH PREREQUISITES ########################
-# - This patch should be run on a fresh site with ERPNext installed
+# - This patch should be run on a fresh site with ERPNext installed (`suppliers_portal` should be installed after `erpnext`)
 # - The following files (containing exported doctype records) must be setup in the
 #   site's private backups folder:
 #   - users.json (the 'send_welcome_email' field should be set to 0 otherwise it'll
@@ -220,23 +220,19 @@ def import_invoices():
 			if frappe.db.exists("Purchase Invoice", {"name": invoice.get("name")}):
 				continue
 
-			remarks = ""
-			if invoice.get("site_code"):
-				remarks += f"Site Code: {invoice.get('site_code')}\n"
-			if invoice.get("notes"):
-				remarks += f"Notes: {invoice.get('notes')}\n"
-
 			invoice_doc = frappe.new_doc("Purchase Invoice")
 			invoice_doc.update(
 				{
 					"supplier": invoice.get("supplier"),
 					"bill_no": invoice.get("supplier_invoice_number"),
-					"bill_date": getdate(invoice.get("invoice_date")),
+					"site_code": invoice.get("site_code"),
 					"set_posting_time": True,
+					"bill_date": getdate(invoice.get("invoice_date")),
 					"posting_date": getdate(invoice.get("invoice_date")),
+					"service_date": getdate(invoice.get("service_date")),
 					"due_date": getdate(invoice.get("due_date")),
 					"payment_terms_template": invoice.get("invoice_terms"),
-					"remarks": remarks,
+					"remarks": invoice.get("notes"),
 					"owner": invoice.get("owner"),
 					"creation": invoice.get("creation"),
 				}
