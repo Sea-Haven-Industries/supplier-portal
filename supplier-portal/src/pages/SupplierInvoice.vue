@@ -1,12 +1,12 @@
 <template>
-	<div v-if="!invoice.loading && invoice.doc">
+	<div v-if="!invoice.loading && documents.invoice">
 		<div class="container mt-5 py-3 border">
 			<div class="row mb-3 vr-aligned">
 				<div class="col-6">
 					<h1 class="text-gray-900 font-bold text-[32px]">
-						Supplier Invoice: {{ invoice.doc.name }}
+						Supplier Invoice: {{ documents.invoice.name }}
 						<Badge>
-							{{ invoice.doc.status }}
+							{{ documents.invoice.status }}
 						</Badge>
 					</h1>
 				</div>
@@ -22,35 +22,24 @@
 					</div>
 				</div>
 			</div>
-			<div
-				:class="
-					invoice.doc.supplier_invoice_items
-						? 'container border-bottom pb-3'
-						: 'container pb-3'
-				"
-			>
+			<div :class="documents.invoice.items ? 'container border-bottom pb-3' : 'container pb-3'">
 				<div class="mb-1 row">
 					<div class="col">
 						<div class="row">
-							<label for="suppplier_id" class="col-sm-3 col-form-label"
-								>Supplier ID</label
-							>
+							<label for="suppplier_id" class="col-sm-3 col-form-label">Supplier ID</label>
 							<div class="col-sm-8">
 								<input
 									type="text"
 									readonly
 									class="form-control-plaintext"
 									id="suppplier_id"
-									:value="invoice.doc.supplier"
-								/>
+									:value="documents.invoice.supplier" />
 							</div>
 						</div>
 					</div>
 					<div class="col">
 						<div class="row mb-1">
-							<label for="service_date" class="col-sm-3 col-form-label"
-								>Service Date</label
-							>
+							<label for="service_date" class="col-sm-3 col-form-label">Service Date</label>
 							<div class="col-sm-8">
 								<TextInput
 									:type="'date'"
@@ -59,8 +48,7 @@
 									placeholder="Payment Date"
 									id="service_date"
 									:disabled="true"
-									v-model="invoice.doc.service_date"
-								/>
+									v-model="documents.invoice.service_date" />
 							</div>
 						</div>
 					</div>
@@ -68,35 +56,29 @@
 				<div class="mb-1 row">
 					<div class="col">
 						<div class="row">
-							<label for="suppplier_name" class="col-sm-3 col-form-label"
-								>Supplier Name</label
-							>
+							<label for="suppplier_name" class="col-sm-3 col-form-label">Supplier Name</label>
 							<div class="col-sm-8">
 								<input
 									type="text"
 									readonly
 									class="form-control-plaintext"
 									id="suppplier_name"
-									:value="invoice.doc.supplier_name"
-								/>
+									:value="documents.invoice.supplier_name" />
 							</div>
 						</div>
 					</div>
 					<div class="col">
 						<div class="row mb-1">
-							<label for="invoice_date" class="col-sm-3 col-form-label"
-								>Invoice Date</label
-							>
+							<label for="posting_date" class="col-sm-3 col-form-label">Invoice Date</label>
 							<div class="col-sm-8">
 								<TextInput
 									:type="'date'"
 									size="lg"
 									variant="outline"
 									placeholder="Invoice Date"
-									id="invoice_date"
+									id="posting_date"
 									:disabled="true"
-									v-model="invoice.doc.invoice_date"
-								/>
+									v-model="documents.invoice.posting_date" />
 							</div>
 						</div>
 					</div>
@@ -114,8 +96,7 @@
 									placeholder="Due Date"
 									id="due_date"
 									:disabled="true"
-									v-model="invoice.doc.due_date"
-								/>
+									v-model="documents.invoice.due_date" />
 							</div>
 						</div>
 					</div>
@@ -124,17 +105,14 @@
 					<div class="col"></div>
 					<div class="col">
 						<div class="row">
-							<label for="invoice_terms" class="col-sm-3 col-form-label"
-								>Invoice Terms</label
-							>
+							<label for="payment_terms_template" class="col-sm-3 col-form-label">Invoice Terms</label>
 							<div class="col-sm-8">
 								<input
 									type="text"
 									readonly
 									class="form-control-plaintext h-100 d-inline-block"
-									id="invoice_terms"
-									:value="invoice.doc.invoice_terms"
-								/>
+									id="payment_terms_template"
+									:value="documents.invoice.payment_terms_template" />
 							</div>
 						</div>
 					</div>
@@ -150,85 +128,65 @@
 										data-bs-toggle="collapse"
 										data-bs-target="#collapseOne"
 										aria-expanded="true"
-										aria-controls="collapseOne"
-									>
+										aria-controls="collapseOne">
 										Service Address
 									</button>
 								</h2>
-								<div
-									id="collapseOne"
-									class="accordion-collapse collapse"
-									data-bs-parent="#service-address-accordion"
-								>
+								<div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#service-address-accordion">
 									<div class="accordion-body">
 										<div class="row mb-1">
-											<label for="site_code" class="col-sm-3 col-form-label"
-												>Site Code</label
-											>
+											<label for="site_code" class="col-sm-3 col-form-label">Site Code</label>
 											<div class="col-sm-8">
 												<input
 													type="text"
 													readonly
 													class="form-control-plaintext"
 													id="site_code"
-													:value="invoice.doc.site_code"
-												/>
+													:value="documents?.address?.doc?.site_code" />
 											</div>
 										</div>
 										<div class="row mb-1">
-											<label for="street" class="col-sm-3 col-form-label"
-												>Street</label
-											>
+											<label for="street" class="col-sm-3 col-form-label">Street</label>
 											<div class="col-sm-8">
 												<input
 													type="text"
 													readonly
 													class="form-control-plaintext"
 													id="street"
-													:value="invoice.doc.street"
-												/>
+													:value="documents?.address?.doc?.address_line1" />
 											</div>
 										</div>
 										<div class="row mb-1">
-											<label for="city" class="col-sm-3 col-form-label"
-												>City</label
-											>
+											<label for="city" class="col-sm-3 col-form-label">City</label>
 											<div class="col-sm-8">
 												<input
 													type="text"
 													readonly
 													class="form-control-plaintext"
 													id="city"
-													:value="invoice.doc.city"
-												/>
+													:value="documents?.address?.doc?.city" />
 											</div>
 										</div>
 										<div class="row mb-1">
-											<label for="state" class="col-sm-3 col-form-label"
-												>State</label
-											>
+											<label for="state" class="col-sm-3 col-form-label">State</label>
 											<div class="col-sm-8">
 												<input
 													type="text"
 													readonly
 													class="form-control-plaintext"
 													id="state"
-													:value="invoice.doc.state"
-												/>
+													:value="documents?.address?.doc?.state" />
 											</div>
 										</div>
 										<div class="row mb-1">
-											<label for="zip_code" class="col-sm-3 col-form-label"
-												>Zip Code</label
-											>
+											<label for="zip_code" class="col-sm-3 col-form-label">Zip Code</label>
 											<div class="col-sm-8">
 												<input
 													type="text"
 													readonly
 													class="form-control-plaintext"
 													id="zip_code"
-													:value="invoice.doc.zip_code"
-												/>
+													:value="documents?.address?.doc?.pincode" />
 											</div>
 										</div>
 									</div>
@@ -246,31 +204,23 @@
 										data-bs-toggle="collapse"
 										data-bs-target="#collapse-2"
 										aria-expanded="true"
-										aria-controls="collapse-2"
-									>
+										aria-controls="collapse-2">
 										Notes
 									</button>
 								</h2>
-								<div
-									id="collapse-2"
-									class="accordion-collapse collapse"
-									data-bs-parent="#address-accordion"
-								>
+								<div id="collapse-2" class="accordion-collapse collapse" data-bs-parent="#address-accordion">
 									<div class="accordion-body">
 										<div class="row mb-1">
-											<label for="notes" class="col-sm-4 col-form-label"
-												>Notes</label
-											>
+											<label for="remarks" class="col-sm-4 col-form-label">Notes</label>
 											<div class="col-sm-8">
 												<Textarea
 													:variant="'subtle'"
 													size="md"
 													placeholder="Enter Notes Here"
 													:disabled="true"
-													v-model="invoice.doc.notes"
+													v-model="documents.invoice.remarks"
 													label=""
-													id="notes"
-												/>
+													id="remarks" />
 											</div>
 										</div>
 									</div>
@@ -281,7 +231,7 @@
 				</div>
 			</div>
 
-			<div class="container" v-if="invoice.doc.supplier_invoice_items">
+			<div class="container" v-if="documents.invoice.items">
 				<table class="table">
 					<thead>
 						<tr>
@@ -293,13 +243,10 @@
 						</tr>
 					</thead>
 					<tbody class="table-group-divider">
-						<tr
-							v-for="(item, index) in invoice.doc.supplier_invoice_items"
-							:key="item.name"
-						>
+						<tr v-for="(item, index) in documents.invoice.items" :key="item.name">
 							<th scope="row">{{ index + 1 }}</th>
-							<td>{{ item.service_type }}</td>
-							<td>{{ item.quantity }}</td>
+							<td>{{ item.item_code }}</td>
+							<td>{{ item.qty }}</td>
 							<td><i class="bi bi-currency-dollar"></i> {{ item.rate }}</td>
 							<td><i class="bi bi-currency-dollar"></i> {{ item.amount }}</td>
 						</tr>
@@ -312,20 +259,11 @@
 					<div class="col"></div>
 					<div class="col">
 						<div class="input-group">
-							<label for="total_amount" class="col-sm-3 col-form-label"
-								>Total Amount</label
-							>
+							<label for="grand_total" class="col-sm-3 col-form-label">Total Amount</label>
 							<div class="cols-sm-5">
 								<div class="input-group">
-									<span class="input-group-text"
-										><i class="bi bi-currency-dollar"></i>
-									</span>
-									<input
-										type="text"
-										readonly
-										class="form-control"
-										v-model.number="invoice.doc.total_amount"
-									/>
+									<span class="input-group-text"><i class="bi bi-currency-dollar"></i> </span>
+									<input type="text" readonly class="form-control" v-model.number="documents.invoice.grand_total" />
 								</div>
 							</div>
 						</div>
@@ -336,22 +274,28 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { createDocumentResource, createListResource, Badge } from 'frappe-ui'
 import Textarea from 'frappe-ui/src/components/Textarea.vue'
 import TextInput from 'frappe-ui/src/components/TextInput.vue'
+import { reactive, watch } from 'vue'
 
-const props = defineProps({
-	supplierInvoiceNumber: {
-		type: String,
-		required: true,
-	},
-})
+const { supplierInvoiceNumber } = defineProps<{
+	supplierInvoiceNumber: string
+}>()
 
+const documents = reactive({})
 const invoice = createDocumentResource({
-	doctype: 'Invoices',
-	name: props.supplierInvoiceNumber,
-	auto: true,
+	doctype: 'Purchase Invoice',
+	name: supplierInvoiceNumber,
+	onSuccess: (data) => {
+		documents.invoice = data
+		documents.address = createDocumentResource({
+			doctype: 'Address',
+			name: data.supplier_address,
+			auto: true
+		})
+	}
 })
 </script>
 

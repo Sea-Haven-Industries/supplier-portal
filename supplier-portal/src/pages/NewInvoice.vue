@@ -12,13 +12,7 @@
 								<button type="button" class="btn btn-primary btn-light">
 									<router-link to="/">Cancel</router-link>
 								</button>
-								<button
-									type="button"
-									class="btn btn-primary btn-dark"
-									@click="saveInvoice"
-								>
-									Save
-								</button>
+								<button type="button" class="btn btn-primary btn-dark" @click="saveInvoice">Save</button>
 							</div>
 						</div>
 					</div>
@@ -29,24 +23,19 @@
 				<div class="mb-2 row">
 					<div class="col">
 						<div class="row">
-							<label for="supplier_invoice_number" class="col-sm-3 col-form-label"
-								>Invoice Number</label
-							>
+							<label for="bill_no" class="col-sm-3 col-form-label">Invoice Number</label>
 							<div class="col-sm-8">
 								<input
 									type="text"
 									class="form-control"
-									id="supplier_invoice_number"
-									v-model.number="invoiceData.supplier_invoice_number"
-								/>
+									id="bill_no"
+									v-model.number="invoiceData.bill_no" />
 							</div>
 						</div>
 					</div>
 					<div class="col">
 						<div class="row">
-							<label for="service_date" class="col-sm-3 col-form-label"
-								>Service Date</label
-							>
+							<label for="service_date" class="col-sm-3 col-form-label">Service Date</label>
 							<div class="col-sm-8">
 								<TextInput
 									:type="'date'"
@@ -55,8 +44,7 @@
 									placeholder="Service Date"
 									id="service_date"
 									:disabled="false"
-									v-model="invoiceData.service_date"
-								/>
+									v-model="invoiceData.service_date" />
 							</div>
 						</div>
 					</div>
@@ -65,35 +53,29 @@
 				<div class="mb-2 row">
 					<div class="col">
 						<div class="row">
-							<label for="supplier_id" class="col-sm-3 col-form-label"
-								>Supplier ID</label
-							>
+							<label for="supplier_id" class="col-sm-3 col-form-label">Supplier ID</label>
 							<div class="col-sm-8">
 								<input
 									type="text"
 									readonly
 									class="form-control-plaintext"
 									id="supplier_id"
-									v-model="invoiceData.supplier"
-								/>
+									v-model="invoiceData.supplier" />
 							</div>
 						</div>
 					</div>
 					<div class="col">
 						<div class="row">
-							<label for="invoice_date" class="col-sm-3 col-form-label"
-								>Invoice Date</label
-							>
+							<label for="posting_date" class="col-sm-3 col-form-label">Invoice Date</label>
 							<div class="col-sm-8">
 								<TextInput
 									:type="'date'"
 									size="lg"
 									variant="outline"
 									placeholder="Invoice Date"
-									id="invoice_date"
+									id="posting_date"
 									:disabled="false"
-									v-model="invoiceData.invoice_date"
-								/>
+									v-model="invoiceData.posting_date" />
 							</div>
 						</div>
 					</div>
@@ -102,9 +84,7 @@
 				<div class="mb-2 row">
 					<div class="col">
 						<div class="row">
-							<label for="supplier_name" class="col-sm-3 col-form-label"
-								>Supplier Name</label
-							>
+							<label for="supplier_name" class="col-sm-3 col-form-label">Supplier Name</label>
 							<div class="col-sm-8">
 								<input
 									type="text"
@@ -112,36 +92,28 @@
 									class="form-control-plaintext"
 									id="supplier_name"
 									:value="invoiceData.supplier_name"
-									v-if="!isAdministrator"
-								/>
+									v-if="!isAdministrator" />
 								<Autocomplete
 									id="supplier_name"
 									:options="portalSuppliers.data"
 									:placeholder="'Supplier Name'"
-									:hideSearch="!invoiceData.supplier_invoice_number"
+									:hideSearch="!invoiceData.bill_no"
 									:label="'company_name'"
 									v-model="invoiceData.supplier_name"
-									v-else
-								/>
+									v-else />
 							</div>
 						</div>
 					</div>
 					<div class="col">
 						<div class="row">
-							<label for="invoice_terms" class="col-sm-3 col-form-label"
-								>Invoice Terms</label
-							>
+							<label for="payment_terms_template" class="col-sm-3 col-form-label">Invoice Terms</label>
 							<div class="col-sm-8">
 								<select
 									class="form-select form-select-mb h-100 d-inline-block"
 									aria-label="Invoice Terms"
-									v-model="invoiceData.invoice_terms"
-								>
+									v-model="invoiceData.payment_terms_template">
 									<option readonly></option>
-									<option
-										v-for="option in invoiceTermOptions"
-										:value="option.value"
-									>
+									<option v-for="option in invoiceTermOptions" :value="option.value">
 										{{ option.label }}
 									</option>
 								</select>
@@ -153,9 +125,7 @@
 					<div class="col"></div>
 					<div class="col">
 						<div class="row">
-							<label for="invoice_date" class="col-sm-3 col-form-label"
-								>Due Date</label
-							>
+							<label for="posting_date" class="col-sm-3 col-form-label">Due Date</label>
 							<div class="col-sm-8">
 								<TextInput
 									:type="'date'"
@@ -164,8 +134,7 @@
 									placeholder="Due Date"
 									id="due_date"
 									:disabled="true"
-									v-model="invoiceDueDate"
-								/>
+									v-model="invoiceDueDate" />
 							</div>
 						</div>
 					</div>
@@ -182,80 +151,43 @@
 										data-bs-toggle="collapse"
 										data-bs-target="#collapseOne"
 										aria-expanded="true"
-										aria-controls="collapseOne"
-									>
+										aria-controls="collapseOne">
 										Service Address
 									</button>
 								</h2>
 								<div
 									id="collapseOne"
 									class="accordion-collapse collapse show"
-									data-bs-parent="#service-address-accordion"
-								>
+									data-bs-parent="#service-address-accordion">
 									<div class="accordion-body">
 										<div class="row mb-1">
-											<label for="site_code" class="col-sm-3 col-form-label"
-												>Site Code</label
-											>
+											<label for="site_code" class="col-sm-3 col-form-label">Site Code</label>
 											<div class="col-sm-8">
-												<input
-													type="text"
-													class="form-control"
-													id="site_code"
-													v-model="invoiceData.site_code"
-												/>
+												<input type="text" class="form-control" id="site_code" v-model="invoiceData.site_code" />
 											</div>
 										</div>
 										<div class="row mb-1">
-											<label for="street" class="col-sm-3 col-form-label"
-												>Street</label
-											>
+											<label for="street" class="col-sm-3 col-form-label">Street</label>
 											<div class="col-sm-8">
-												<input
-													type="text"
-													class="form-control"
-													id="street"
-													v-model="invoiceData.street"
-												/>
+												<input type="text" class="form-control" id="street" v-model="invoiceData.street" />
 											</div>
 										</div>
 										<div class="row mb-1">
-											<label for="city" class="col-sm-3 col-form-label"
-												>City</label
-											>
+											<label for="city" class="col-sm-3 col-form-label">City</label>
 											<div class="col-sm-8">
-												<input
-													type="text"
-													class="form-control"
-													id="city"
-													v-model="invoiceData.city"
-												/>
+												<input type="text" class="form-control" id="city" v-model="invoiceData.city" />
 											</div>
 										</div>
 										<div class="row mb-1">
-											<label for="state" class="col-sm-3 col-form-label"
-												>State</label
-											>
+											<label for="state" class="col-sm-3 col-form-label">State</label>
 											<div class="col-sm-8">
-												<input
-													type="text"
-													class="form-control"
-													id="state"
-													v-model="invoiceData.state"
-												/>
+												<input type="text" class="form-control" id="state" v-model="invoiceData.state" />
 											</div>
 										</div>
 										<div class="row mb-1">
-											<label for="zip_code" class="col-sm-3 col-form-label"
-												>Zip Code</label
-											>
+											<label for="zip_code" class="col-sm-3 col-form-label">Zip Code</label>
 											<div class="col-sm-8">
-												<input
-													type="text"
-													class="form-control"
-													id="zip_code"
-													v-model="invoiceData.zip_code"
-												/>
+												<input type="text" class="form-control" id="zip_code" v-model="invoiceData.zip_code" />
 											</div>
 										</div>
 									</div>
@@ -273,30 +205,22 @@
 										data-bs-toggle="collapse"
 										data-bs-target="#collapse-2"
 										aria-expanded="true"
-										aria-controls="collapse-2"
-									>
+										aria-controls="collapse-2">
 										Notes
 									</button>
 								</h2>
-								<div
-									id="collapse-2"
-									class="accordion-collapse collapse show"
-									data-bs-parent="#address-accordion"
-								>
+								<div id="collapse-2" class="accordion-collapse collapse show" data-bs-parent="#address-accordion">
 									<div class="accordion-body">
 										<div class="row mb-1">
-											<label for="notes" class="col-sm-3 col-form-label"
-												>Notes</label
-											>
+											<label for="remarks" class="col-sm-3 col-form-label">Notes</label>
 											<div class="col-md-8">
 												<Textarea
 													:variant="'subtle'"
 													size="md"
 													placeholder="Enter Notes Here"
 													:disabled="false"
-													v-model="invoiceData.notes"
-													id="notes"
-												/>
+													v-model="invoiceData.remarks"
+													id="remarks" />
 											</div>
 										</div>
 									</div>
@@ -327,44 +251,27 @@
 									<select
 										class="form-select form-select-mb h-100 d-inline-block"
 										aria-label="Service Types"
-										v-model="item.service_type"
-									>
+										v-model="item.item_code">
 										<option readonly></option>
-										<option
-											v-for="option in serviceTypeOption"
-											:value="option.value"
-										>
+										<option v-for="option in serviceTypeOption" :value="option.value">
 											{{ option.label }}
 										</option>
 									</select>
 								</div>
 							</td>
 							<td>
-								<input type="text" class="form-control" v-model="item.quantity" />
+								<input type="text" class="form-control" v-model="item.qty" />
 							</td>
 							<td>
 								<div class="input-group">
-									<span class="input-group-text"
-										><i class="bi bi-currency-dollar"></i>
-									</span>
-									<input
-										type="text"
-										class="form-control"
-										v-model.number="item.rate"
-									/>
+									<span class="input-group-text"><i class="bi bi-currency-dollar"></i> </span>
+									<input type="text" class="form-control" v-model.number="item.rate" />
 								</div>
 							</td>
 							<td>
 								<div class="input-group">
-									<span class="input-group-text"
-										><i class="bi bi-currency-dollar"></i>
-									</span>
-									<input
-										type="text"
-										readonly
-										class="form-control"
-										v-model.number="item.amount"
-									/>
+									<span class="input-group-text"><i class="bi bi-currency-dollar"></i> </span>
+									<input type="text" readonly class="form-control" v-model.number="item.amount" />
 								</div>
 							</td>
 							<td>
@@ -390,20 +297,11 @@
 					<div class="col"></div>
 					<div class="col">
 						<div class="input-group">
-							<label for="total_amount" class="col-sm-3 col-form-label"
-								>Total Amount</label
-							>
+							<label for="grand_total" class="col-sm-3 col-form-label">Total Amount</label>
 							<div class="cols-sm-5">
 								<div class="input-group">
-									<span class="input-group-text currency-fmt"
-										><i class="bi bi-currency-dollar"></i>
-									</span>
-									<input
-										type="text"
-										readonly
-										class="form-control"
-										v-model.number="invoiceData.total_amount"
-									/>
+									<span class="input-group-text currency-fmt"><i class="bi bi-currency-dollar"></i> </span>
+									<input type="text" readonly class="form-control" v-model.number="invoiceData.grand_total" />
 								</div>
 							</div>
 						</div>
@@ -427,13 +325,20 @@ import Autocomplete from 'frappe-ui/src/components/Autocomplete.vue'
 const isAdministrator = sessionUser() === 'Administrator'
 
 const portalInvoice = createListResource({
-	doctype: 'Invoices',
+	doctype: 'Purchase Invoice',
 	insert: {
 		onSuccess() {
 			router.push({ name: 'SupplierInvoiceList' })
 		},
 	},
 })
+
+const portalSuppliers = createListResource({
+	doctype: 'Supplier',
+	fields: ['name as value', 'supplier_name as label'],
+	orderBy: 'creation desc',
+})
+portalSuppliers.fetch()
 
 const invoiceTermOptions = [
 	{
@@ -474,28 +379,25 @@ const serviceTypeOption = [
 ]
 
 const invoiceData = reactive({
-	supplier_invoice_number: '',
+	bill_no: '',
 	supplier: sessionSupplierId(),
 	service_date: new Date().toISOString().split('T')[0],
-	invoice_date: new Date().toISOString().split('T')[0],
+	posting_date: new Date().toISOString().split('T')[0],
 	supplier_name: sessionSupplierName(),
-	invoice_terms: '',
-	total_amount: 0,
+	payment_terms_template: '',
+	grand_total: 0,
 	site_code: '',
 	street: '',
 	city: '',
 	state: '',
 	zip_code: '',
-	notes: '',
+	remarks: '',
 })
 
 const invoiceItems = reactive([])
 let invoiceDueDate = computed(() => {
-	if (invoiceData.invoice_terms) {
-		let result = addDays(
-			invoiceData.invoice_date,
-			parseInvoiceTerms(invoiceData.invoice_terms),
-		)
+	if (invoiceData.payment_terms_template) {
+		let result = addDays(invoiceData.posting_date, parseInvoiceTerms(invoiceData.payment_terms_template))
 		// return as string
 		return result.toISOString().split('T')[0]
 	}
@@ -504,61 +406,52 @@ let invoiceDueDate = computed(() => {
 
 const addRow = () => {
 	const rowObject = reactive({
-		service_type: '',
-		quantity: 0,
+		item_code: '',
+		qty: 0,
 		rate: 0,
 		amount: 0,
 	})
-	rowObject.amount = computed(() => rowObject.quantity * rowObject.rate)
+	rowObject.amount = computed(() => rowObject.qty * rowObject.rate)
 	invoiceItems.push(rowObject)
 }
 
-const deleteRow = (index) => {
+const deleteRow = index => {
 	invoiceItems.splice(index, 1)
 }
 
-invoiceData.total_amount = computed(() => {
+invoiceData.grand_total = computed(() => {
 	return invoiceItems.reduce((acc, item) => acc + item.amount, 0)
 })
 
 const saveInvoice = () => {
 	portalInvoice.insert.submit({
-		supplier_invoice_number: invoiceData.supplier_invoice_number,
-		supplier: invoiceData.supplier,
-		service_date: invoiceData.service_date,
-		invoice_date: invoiceData.invoice_date,
-		supplier_name: invoiceData.supplier_name,
-		invoice_terms: invoiceData.invoice_terms,
+		...invoiceData,
+		set_posting_time: true,
+		due_date: invoiceDueDate.value,
 		site_code: invoiceData.site_code,
 		street: invoiceData.street,
 		city: invoiceData.city,
 		state: invoiceData.state,
 		zip_code: invoiceData.zip_code,
-		notes: invoiceData.notes,
-		supplier_invoice_items: invoiceItems.map((item) => {
+		remarks: invoiceData.remarks,
+		items: invoiceItems.map(item => {
 			return {
-				service_type: item.service_type,
-				quantity: item.quantity,
+				item_code: item.item_code,
+				qty: item.qty,
 				rate: item.rate,
 			}
 		}),
 	})
 }
-const portalSuppliers = createListResource({
-	doctype: 'Supplier',
-	fields: ['name as value', 'company_name as label'],
-	orderBy: 'creation desc',
-})
-portalSuppliers.fetch()
 
 // watch for changes in invoiceData.supplier_name
 watch(
 	() => invoiceData.supplier_name,
-	(newVal) => {
+	newVal => {
 		if (newVal) {
 			invoiceData.supplier = newVal.value
 		}
-	},
+	}
 )
 </script>
 

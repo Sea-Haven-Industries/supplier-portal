@@ -4,29 +4,11 @@
 			<form class="flex flex-col space-y-2 w-full" @submit.prevent="submit">
 				<Switch v-model="state.forAdmin" label="Login as Admin" />
 				<div v-if="state.forAdmin">
-					<Input
-						required
-						name="email"
-						type="text"
-						placeholder="username@email.com"
-						label="User ID"
-					/>
-					<Input
-						required
-						name="password"
-						type="password"
-						placeholder="••••••"
-						label="Password"
-					/>
+					<Input required name="email" type="text" placeholder="username@email.com" label="User ID" />
+					<Input required name="password" type="password" placeholder="••••••" label="Password" />
 				</div>
 				<div v-else>
-					<Input
-						required
-						name="supplier_id"
-						type="text"
-						placeholder="Supplier ID"
-						label="Supplier ID"
-					/>
+					<Input required name="supplier_id" type="text" placeholder="Supplier ID" label="Supplier ID" />
 				</div>
 				<Button :loading="session.login.loading" appearance="primary">Login</Button>
 				<div v-if="session.login.error" class="text-red-500">

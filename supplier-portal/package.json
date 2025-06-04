@@ -1,26 +1,26 @@
 {
-  "name": "frappe-ui-frontend",
-  "private": true,
-  "version": "0.0.0",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build --base=/assets/suppliers_portal/supplier-portal/ && yarn copy-html-entry",
-    "preview": "vite preview",
-    "copy-html-entry": "cp ../suppliers_portal/public/supplier-portal/index.html ../suppliers_portal/www/supplier-portal.html"
-  },
-  "dependencies": {
-    "bootstrap": "5.2.3",
-    "bootstrap-icons": "^1.11.3",
-    "feather-icons": "^4.28.0",
-    "frappe-ui": "^0.1.69",
-    "vue": "^3.2.25",
-    "vue-router": "^4.0.12"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-vue": "^2.0.0",
-    "autoprefixer": "^10.4.2",
-    "postcss": "^8.4.5",
-    "tailwindcss": "^3.0.15",
-    "vite": "^2.7.2"
-  }
+	"name": "frappe-ui-frontend",
+	"private": true,
+	"version": "0.0.0",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build --base=/assets/suppliers_portal/supplier-portal/ && yarn copy-html-entry",
+		"preview": "vite preview",
+		"copy-html-entry": "cp ../suppliers_portal/public/supplier-portal/index.html ../suppliers_portal/www/supplier-portal.html"
+	},
+	"dependencies": {
+		"bootstrap": "5.2.3",
+		"bootstrap-icons": "^1.11.3",
+		"feather-icons": "^4.28.0",
+		"frappe-ui": "^0.1.69",
+		"vue": "^3.2.25",
+		"vue-router": "^4.0.12"
+	},
+	"devDependencies": {
+		"@vitejs/plugin-vue": "^2.0.0",
+		"autoprefixer": "^10.4.2",
+		"postcss": "^8.4.5",
+		"tailwindcss": "^3.0.15",
+		"vite": "^2.7.2"
+	}
 }
