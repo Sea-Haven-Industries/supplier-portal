@@ -288,14 +288,14 @@ const documents = reactive({})
 const invoice = createDocumentResource({
 	doctype: 'Purchase Invoice',
 	name: supplierInvoiceNumber,
-	onSuccess: (data) => {
+	onSuccess: data => {
 		documents.invoice = data
 		documents.address = createDocumentResource({
 			doctype: 'Address',
 			name: data.supplier_address,
-			auto: true
+			auto: true,
 		})
-	}
+	},
 })
 </script>
 

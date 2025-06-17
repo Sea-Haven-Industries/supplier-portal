@@ -88,9 +88,7 @@ def setup_accounts():
 		force=True,
 	)
 	update_account_number(f"1110 - Cash - {abbr}", "Petty Cash", account_number="1110")
-	update_account_number(
-		f"Primary Checking - {abbr}", "Primary Checking", account_number="1201"
-	)
+	update_account_number(f"Primary Checking - {abbr}", "Primary Checking", account_number="1201")
 
 
 def create_fiscal_years():
@@ -324,9 +322,7 @@ def import_invoices():
 						"paid_from": get_account_name("Bank", "Asset"),
 						"reference_no": payment.get("payment_reference_number")
 						or "Note: Missing reference during ERPNext import",
-						"reference_date": getdate(
-							payment.get("payment_reference_date")
-						),
+						"reference_date": getdate(payment.get("payment_reference_date")),
 						"references": [
 							{
 								"reference_doctype": invoice_doc.doctype,
@@ -341,6 +337,4 @@ def import_invoices():
 					payment_doc.insert(ignore_permissions=True)
 					payment_doc.submit()
 				except Exception as e:
-					print(
-						f"Error importing payment for invoice {invoice_doc.bill_no}: {e}"
-					)
+					print(f"Error importing payment for invoice {invoice_doc.bill_no}: {e}")
