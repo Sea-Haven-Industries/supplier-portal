@@ -246,3 +246,5 @@ website_route_rules = [
 	{"from_route": "/supplier-portal/<path:app_path>", "to_route": "supplier-portal"},
 	{"from_route": "/erpnext", "to_route": "/app"},
 ]
+
+export_python_type_annotations = True

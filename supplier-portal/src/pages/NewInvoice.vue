@@ -25,11 +25,7 @@
 						<div class="row">
 							<label for="bill_no" class="col-sm-3 col-form-label">Invoice Number</label>
 							<div class="col-sm-8">
-								<input
-									type="text"
-									class="form-control"
-									id="bill_no"
-									v-model.number="invoiceData.bill_no" />
+								<input type="text" class="form-control" id="bill_no" v-model.number="invoiceData.bill_no" />
 							</div>
 						</div>
 					</div>
