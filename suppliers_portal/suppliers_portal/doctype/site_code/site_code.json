@@ -1,10 +1,10 @@
 {
 	"actions": [],
-	"allow_rename": 1,
+	"autoname": "field:site_code",
 	"creation": "2025-06-17 01:51:35.709515",
 	"doctype": "DocType",
 	"engine": "InnoDB",
-	"field_order": ["site_code", "column_break_pwyn", "address_html"],
+	"field_order": ["site_code", "column_break_pwyn", "addresses_section", "address_html"],
 	"fields": [
 		{
 			"fieldname": "site_code",
@@ -29,14 +29,20 @@
 			"fieldtype": "HTML",
 			"label": "Address HTML",
 			"read_only": 1
+		},
+		{
+			"fieldname": "addresses_section",
+			"fieldtype": "Section Break",
+			"label": "Addresses"
 		}
 	],
 	"index_web_pages_for_search": 1,
 	"links": [],
-	"modified": "2025-06-17 02:11:43.902766",
+	"modified": "2025-06-17 02:29:32.191624",
 	"modified_by": "Administrator",
 	"module": "Suppliers Portal",
 	"name": "Site Code",
+	"naming_rule": "By fieldname",
 	"owner": "Administrator",
 	"permissions": [
 		{
@@ -54,5 +60,6 @@
 	],
 	"sort_field": "creation",
 	"sort_order": "DESC",
-	"states": []
+	"states": [],
+	"title_field": "site_code"
 }

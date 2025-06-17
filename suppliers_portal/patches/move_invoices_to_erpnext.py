@@ -1,4 +1,5 @@
 import json
+import re
 
 import frappe
 from erpnext.accounts.doctype.account.account import update_account_number
@@ -253,12 +254,13 @@ def import_invoices():
 			if frappe.db.exists("Purchase Invoice", {"name": invoice.get("name")}):
 				continue
 
+			site_code = get_site_code(invoice)
 			invoice_doc = frappe.new_doc("Purchase Invoice")
 			invoice_doc.update(
 				{
 					"supplier": invoice.get("supplier"),
 					"bill_no": invoice.get("supplier_invoice_number"),
-					"site_code": invoice.get("site_code"),
+					"site_code": site_code or "",
 					"set_posting_time": True,
 					"bill_date": getdate(invoice.get("invoice_date")),
 					"posting_date": getdate(invoice.get("invoice_date")),
@@ -292,16 +294,35 @@ def import_invoices():
 				continue
 
 			if invoice.get("street"):
-				address = create_address(
-					{
-						**invoice,
-						"title": invoice.get("supplier"),
-						"ref_doctype": "Supplier",
-						"ref_name": invoice.get("supplier"),
-					}
-				)
-				invoice_doc.supplier_address = address.name
-				invoice_doc.save()
+				if site_code:
+					if frappe.db.exists("Site Code", site_code):
+						site_code_doc = frappe.get_doc("Site Code", site_code)
+					else:
+						site_code_doc = frappe.new_doc("Site Code")
+						site_code_doc.site_code = site_code
+						site_code_doc.save(ignore_permissions=True)
+
+					address = create_address(
+						{
+							**invoice,
+							"title": site_code,
+							"ref_doctype": "Site Code",
+							"ref_name": site_code_doc.name,
+						}
+					)
+					invoice_doc.dispatch_address = address.name
+					invoice_doc.save()
+				else:
+					address = create_address(
+						{
+							**invoice,
+							"title": invoice.get("supplier"),
+							"ref_doctype": "Supplier",
+							"ref_name": invoice.get("supplier"),
+						}
+					)
+					invoice_doc.supplier_address = address.name
+					invoice_doc.save()
 
 			try:
 				invoice_doc.submit()
@@ -338,3 +359,16 @@ def import_invoices():
 					payment_doc.submit()
 				except Exception as e:
 					print(f"Error importing payment for invoice {invoice_doc.bill_no}: {e}")
+
+
+def get_site_code(invoice):
+	if invoice.get("site_code"):
+		return invoice["site_code"].upper()
+
+	# try to find it in the notes
+	site_pattern = re.compile(r"\bsite\s+([A-Z0-9]+)", re.IGNORECASE)
+	notes = invoice.get("notes", "")
+	if notes:
+		matches = site_pattern.findall(notes)
+		if len(matches) > 0:
+			return ", ".join(matches).upper()
