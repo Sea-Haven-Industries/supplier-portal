@@ -206,26 +206,23 @@ def import_suppliers():
 	suppliers_file = frappe.get_site_path("private", "backups", "suppliers.json")
 	with open(suppliers_file) as f:
 		suppliers = json.load(f)
+		print(len(suppliers))
 		for idx, supplier in enumerate(suppliers):
-			update_progress_bar("Importing suppliers", idx, (len(suppliers)))
-
-			# skip if supplier already exists
-			if frappe.db.exists("Supplier", {"name": supplier.get("name")}):
-				continue
-
+			update_progress_bar(f"Importing Suppliers: {idx}", idx, (len(suppliers)))
 			supplier_doc = frappe.new_doc("Supplier")
 			supplier_doc.update(
 				{
-					"supplier_name": supplier.get("company_name"),
+					"supplier_name": supplier.get("name"),
 					"portal_users": [{"user": supplier.get("user")}],
 					"owner": supplier.get("owner"),
 					"creation": supplier.get("creation"),
 				}
 			)
-			supplier_doc.insert(ignore_permissions=True)
+			supplier_doc.save()
 			supplier_docname = frappe.rename_doc(
 				"Supplier", supplier_doc.name, supplier.get("name"), force=True
 			)
+			frappe.db.set_value('Supplier', supplier_docname, 'supplier_name', supplier.get("company_name"))
 
 			if supplier.get("street"):
 				address = create_address(
@@ -256,10 +253,12 @@ def import_invoices():
 
 			site_code = get_site_code(invoice)
 			invoice_doc = frappe.new_doc("Purchase Invoice")
+			supplier = frappe.db.get_value('Supplier', invoice.get("supplier"), 'name')
 			invoice_doc.update(
 				{
 					"supplier": invoice.get("supplier"),
 					"bill_no": invoice.get("supplier_invoice_number"),
+					"supplier_name": frappe.get_value('Supplier', invoice.get("supplier"), 'supplier_name'),
 					"site_code": site_code or "",
 					"set_posting_time": True,
 					"bill_date": getdate(invoice.get("invoice_date")),
