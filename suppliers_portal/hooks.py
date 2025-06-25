@@ -248,3 +248,9 @@ website_route_rules = [
 ]
 
 export_python_type_annotations = True
+
+jinja = {
+	"methods": [
+		"suppliers_portal.overrides.print.amount_in_words_with_asterisks",
+	]
+}
