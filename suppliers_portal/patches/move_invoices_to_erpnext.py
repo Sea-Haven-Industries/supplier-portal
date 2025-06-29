@@ -123,7 +123,22 @@ def create_roles():
 def import_users():
 	print("Importing users")
 	users_file = frappe.get_site_path("private", "backups", "users.json")
-	frappe.import_doc(users_file)
+	with open(users_file) as f:
+		users = json.load(f)
+		for idx, user in enumerate(users):
+			update_progress_bar("Importing users", idx, len(users))
+			if frappe.db.exists("User", user.get("name")):
+				frappe.db.set_value("User", user.get("name"), "creation", user.get("creation"))
+				frappe.db.set_value("User", user.get("name"), "modified", user.get("modified"))
+				frappe.db.set_value("User", user.get("name"), "owner", user.get("owner"))
+				frappe.db.set_value("User", user.get("name"), "modified_by", user.get("modified_by"))
+				continue
+			user_doc = frappe.new_doc("User")
+			user["send_welcome_email"] = 0
+			user_doc.update(user)
+			user_doc.save()
+			if user_doc.name != user.get("name"):
+				frappe.rename_doc("User", user_doc.name, user.get("name"), force=True)
 
 
 def create_items():
@@ -206,9 +221,16 @@ def import_suppliers():
 	suppliers_file = frappe.get_site_path("private", "backups", "suppliers.json")
 	with open(suppliers_file) as f:
 		suppliers = json.load(f)
-		print(len(suppliers))
 		for idx, supplier in enumerate(suppliers):
 			update_progress_bar(f"Importing Suppliers: {idx}", idx, (len(suppliers)))
+			if frappe.db.exists("Supplier", supplier.get("name")):
+				frappe.db.set_value("Supplier", supplier.get("name"), "creation", supplier.get("creation"))
+				frappe.db.set_value("Supplier", supplier.get("name"), "modified", supplier.get("modified"))
+				frappe.db.set_value("Supplier", supplier.get("name"), "owner", supplier.get("owner"))
+				frappe.db.set_value(
+					"Supplier", supplier.get("name"), "modified_by", supplier.get("modified_by")
+				)
+				continue
 			supplier_doc = frappe.new_doc("Supplier")
 			supplier_doc.update(
 				{
@@ -222,7 +244,7 @@ def import_suppliers():
 			supplier_docname = frappe.rename_doc(
 				"Supplier", supplier_doc.name, supplier.get("name"), force=True
 			)
-			frappe.db.set_value('Supplier', supplier_docname, 'supplier_name', supplier.get("company_name"))
+			frappe.db.set_value("Supplier", supplier_docname, "supplier_name", supplier.get("company_name"))
 
 			if supplier.get("street"):
 				address = create_address(
@@ -244,21 +266,39 @@ def import_invoices():
 	invoices_file = frappe.get_site_path("private", "backups", "invoices.json")
 	with open(invoices_file) as f:
 		invoices = json.load(f)
+		import_count = 0
 		for idx, invoice in enumerate(invoices):
-			update_progress_bar("Importing invoices", idx, (len(invoices)))
+			update_progress_bar(f"Importing invoices {import_count:5}", idx, (len(invoices)))
 
 			# skip if purchase invoice already exists
-			if frappe.db.exists("Purchase Invoice", {"name": invoice.get("name")}):
+			if frappe.db.exists(
+				"Purchase Invoice",
+				{
+					"supplier": invoice.get("supplier"),
+					"bill_no": invoice.get("supplier_invoice_number"),
+				},
+			):
 				continue
 
+			if frappe.db.exists(
+				"Purchase Invoice",
+				{
+					"name": invoice.get("name"),
+				},
+			):
+				continue
+
+			if getdate(invoice.get("invoice_date")) < getdate("2025-5-1"):
+				continue
+
+			import_count += 1
 			site_code = get_site_code(invoice)
 			invoice_doc = frappe.new_doc("Purchase Invoice")
-			supplier = frappe.db.get_value('Supplier', invoice.get("supplier"), 'name')
 			invoice_doc.update(
 				{
 					"supplier": invoice.get("supplier"),
 					"bill_no": invoice.get("supplier_invoice_number"),
-					"supplier_name": frappe.get_value('Supplier', invoice.get("supplier"), 'supplier_name'),
+					"supplier_name": frappe.get_value("Supplier", invoice.get("supplier"), "supplier_name"),
 					"site_code": site_code or "",
 					"set_posting_time": True,
 					"bill_date": getdate(invoice.get("invoice_date")),
@@ -268,7 +308,6 @@ def import_invoices():
 					"payment_terms_template": invoice.get("invoice_terms"),
 					"remarks": invoice.get("notes"),
 					"owner": invoice.get("owner"),
-					"creation": invoice.get("creation"),
 				}
 			)
 
@@ -282,12 +321,20 @@ def import_invoices():
 						"rate": item.get("rate"),
 					},
 				)
-
-			# to avoid validating the custom due dates based on payment terms
 			invoice_doc.ignore_default_payment_terms_template = True
-
 			try:
 				invoice_doc.insert(ignore_permissions=True)
+				invoice_docname = frappe.rename_doc(
+					"Purchase Invoice", invoice_doc.name, invoice.get("name"), force=True
+				)
+				frappe.db.set_value("Purchase Invoice", invoice_docname, "creation", invoice.get("creation"))
+				frappe.db.set_value("Purchase Invoice", invoice_docname, "modified", invoice.get("modified"))
+				frappe.db.set_value("Purchase Invoice", invoice_docname, "owner", invoice.get("owner"))
+				frappe.db.set_value(
+					"Purchase Invoice", invoice_docname, "modified_by", invoice.get("modified_by")
+				)
+				invoice_doc.name = invoice_docname
+				invoice_doc.reload()
 			except Exception as e:
 				print(f"Error inserting invoice {invoice_doc.bill_no}: {e}")
 				continue
@@ -358,6 +405,7 @@ def import_invoices():
 					payment_doc.submit()
 				except Exception as e:
 					print(f"Error importing payment for invoice {invoice_doc.bill_no}: {e}")
+	print(f"Imported {import_count} Invoices")
 
 
 def get_site_code(invoice):
@@ -371,3 +419,30 @@ def get_site_code(invoice):
 		matches = site_pattern.findall(notes)
 		if len(matches) > 0:
 			return ", ".join(matches).upper()
+
+
+def rename_existing_invoices():
+	invoices_file = frappe.get_site_path("private", "backups", "invoices.json")
+	with open(invoices_file) as f:
+		invoices = json.load(f)
+		rename_count = 0
+		for idx, invoice in enumerate(invoices):
+			update_progress_bar(f"Updating invoices {rename_count:5}", idx, (len(invoices)))
+			existing_invoice = frappe.db.get_value(
+				"Purchase Invoice",
+				{
+					"supplier": invoice.get("supplier"),
+					"bill_no": invoice.get("supplier_invoice_number"),
+				},
+			)
+			if existing_invoice and existing_invoice != invoice.get("name"):
+				invoice_docname = frappe.rename_doc(
+					"Purchase Invoice", existing_invoice, invoice.get("name"), force=True
+				)
+				frappe.db.set_value("Purchase Invoice", invoice_docname, "creation", invoice.get("creation"))
+				frappe.db.set_value("Purchase Invoice", invoice_docname, "modified", invoice.get("modified"))
+				frappe.db.set_value("Purchase Invoice", invoice_docname, "owner", invoice.get("owner"))
+				frappe.db.set_value(
+					"Purchase Invoice", invoice_docname, "modified_by", invoice.get("modified_by")
+				)
+				rename_count += 1
