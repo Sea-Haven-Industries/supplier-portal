@@ -14,6 +14,7 @@ class SiteCode(Document):
 	if TYPE_CHECKING:
 		from frappe.types import DF
 
+		address: DF.Link | None
 		site_code: DF.Data
 	# end: auto-generated types
 
